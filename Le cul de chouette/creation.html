@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Le Cul de Chouette - Création de compte</title>
+    <meta name="author" content="Eribon Hugo">
+    <meta name="description" content="Le cul de la chouette, par Hugo Eribon">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link href="./css/main.css" rel="stylesheet" type="text/css" />
+    <link href="./css/creation.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/x-icon" href="./img/chouette.png" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <main>
+        <center>
+            <img src="img/logo.png" alt="logo.png" id="logo">
+            <div id="connexion">
+                <h1>Création de compte</h1>
+                <p>Créez vous un compte.</p><br>
+                <form>
+                    <label for="pseudo">Pseudo :</label>
+                    <input id="pseudo" name="psuedo" type="text" required><br><br>
+                    <label for="mdp">Mot de passe :</label>
+                    <input id="mdp" name="mdp" type="password" required><br><br>
+                    <label for="sexe">Sexe :</label>
+                    <div id="radio">
+                    <input type="radio" name="sexe" id="sexe" /> Homme <input type="radio" name="sexe" /> Femme
+                    </div><br>
+                    <label for="ville">Ville :</label>
+                    <input id="ville" name="ville" type="text" required><br><br>
+                    <label for="age">Age :</label>
+                    <input id="age" name="age" type="number" required min="1" max="120"><br><br>
+                    <input type="reset" value="Annuler" id="button">
+                    <input type="submit" value="Valider" id="button">
+                </form>
+                <br><br>
+            </div><br><br>
+            <a href="./index.html">Retour</a><br><br><br>
+        </center>
+    </main>
+    <script src="./js/main.js"></script>
+</body>
+
+</html>
