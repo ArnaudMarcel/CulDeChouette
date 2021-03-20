@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package web.main;
+package Server;
 
 /**
  *
  * @author darra
  */
-public class server {
+public class socketServer {
     
 }
