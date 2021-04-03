@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Server;
-
+package Data;
+import java.util.HashSet;
+import java.util.Set;
 /**
  *
  * @author darra
  */
-public class socketServer {
-    
+public class Partie {
+       
+    static public void Partie() {
+        Set listeJoueurs = new HashSet();  
+    }
 }
