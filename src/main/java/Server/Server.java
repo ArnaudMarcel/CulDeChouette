@@ -6,7 +6,7 @@
 package Server;
 import javax.persistence.*;
 import java.util.*;
-import DB.JoueurDAO;
+import DB.JoueurJPA;
 import Data.Joueur;
 
 /**
@@ -16,10 +16,10 @@ import Data.Joueur;
 
 public class Server {
     public static void main(String[] args) {
-        JoueurDAO JoueurJPA = new JoueurDAO();
+        JoueurJPA JoueurJPA = new JoueurJPA();
         Joueur j = new Joueur("Joe", "lezoo", 56, "masculin", "Peau");
         JoueurJPA.create(j);
-        JoueurJPA.find();
+        JoueurJPA.findAll();
         // Find the number of JoueurDAO objects in the database:
         //Query q1 = em.createQuery("SELECT COUNT(p) FROM JoueurDAO p");
         //System.out.println("Total JoueurDAOs: " + q1.getSingleResult());
