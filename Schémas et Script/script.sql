@@ -1,3 +1,8 @@
+ ---------------------------------------------------------------
+ --        Script Oracle.  
+ ---------------------------------------------------------------
+
+
 ------------------------------------------------------------
 -- Table: Joueur
 ------------------------------------------------------------
@@ -22,8 +27,9 @@ CREATE TABLE Joueur(
 -- Table: Partie
 ------------------------------------------------------------
 CREATE TABLE Partie(
-	idPartie     NUMBER NOT NULL ,
-	heurePartie  DATE  NOT NULL  ,
+	idPartie                  NUMBER NOT NULL ,
+	heurePartie               DATE  NOT NULL  ,
+	nbPointsAAtteindrePartie  NUMBER(10,0)  NOT NULL  ,
 	CONSTRAINT Partie_PK PRIMARY KEY (idPartie)
 );
 
