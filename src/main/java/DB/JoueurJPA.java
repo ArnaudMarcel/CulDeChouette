@@ -7,7 +7,8 @@ package DB;
 
 import Data.Joueur;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -16,7 +17,7 @@ import javax.persistence.Query;
 
 /**
  *
- * @author darra
+ * @author arnaud
  */
 public class JoueurJPA implements Serializable {
 
@@ -35,21 +36,48 @@ public class JoueurJPA implements Serializable {
         em.getTransaction().commit();
     }
     
-    public void findAll() {
-        em.getTransaction().begin();
-        Query q2 = em.createQuery("SELECT j FROM Joueur j", Joueur.class);
-        ArrayList r = new ArrayList(q2.getResultList());
-        Joueur test = new Joueur();
-        test = (Joueur) r.get(0);
-        System.out.println(test.toString());
+    public void update(Joueur j) {
+        Joueur p = em.find(Joueur.class, j.getIdJoueur());
+        p.setAgeJoueur(j.getAgeJoueur());
+        p.setMotDePasseJoueur(j.getMotDePasseJoueur());
+        p.setMoyChouettesVelutesPerdues(j.getMoyChouettesVelutesPerdues());
+        p.setMoySuitesGagnees(j.getMoySuitesGagnees());
+        p.setNbMoyVictoires(j.getNbMoyVictoires());
+        p.setNbParties(j.getNbParties());
+        p.setNbVictoires(j.getNbVictoires());
+        p.setPseudoJoueur(j.getPseudoJoueur());
+        p.setScoreMoyen(j.getScoreMoyen());
+        p.setSexeJoueur(j.getSexeJoueur());
+        p.setVilleJoueur(j.getVilleJoueur());
+        em.getTransaction().commit();
     }
     
-    public void find(Long id) {
-        em.getTransaction().begin();
-        Query q2 = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + id , Joueur.class);
-        Joueur test = new Joueur();
-        //test = q2.getFirstResult();
-        //0System.out.println(test.toString());
+    public int delete(Joueur j) {
+        int count = em.createQuery("DELETE FROM Joueur where idJoueur = " + j.getIdJoueur()).executeUpdate();
+        return count;
+    }
+    
+    public Set<Joueur> findAll() {
+        Set s = null;
+        try{
+            Query q2 = em.createQuery("SELECT l FROM Lancer l", Joueur.class);
+            s = new HashSet(q2.getResultList());
+        } catch(Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return s;
+    }
+    
+    
+    public Joueur find(Long id) {
+        Joueur j = new Joueur();
+        try {
+            Query q2 = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + id, Joueur.class);
+            j = (Joueur) q2.getSingleResult();
+        } catch(Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return j;
     }
     
 }

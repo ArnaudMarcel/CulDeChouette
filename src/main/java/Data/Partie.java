@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 /**
  *
- * @author darra
+ * @author arnaud
  */
 public class Partie {
        

@@ -5,6 +5,8 @@
  */
 package Data;
 
+import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,27 +14,37 @@ import javax.persistence.Id;
 
 /**
  *
- * @author darra
+ * @author arnaud
  */
 @Entity
-public class Joueur {
-    
+public class Joueur implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idJoueur;
+    @Column(name="pseudoJoueur")
     String pseudoJoueur;
+    @Column(name="motDePasseJoueur")
     String motDePasseJoueur;
+    @Column(name="ageJoueur")
     int ageJoueur;
+    @Column(name="sexeJoueur")
     String sexeJoueur;
+    @Column(name="villeJoueur")
     String villeJoueur;
+    @Column(name="nbParties")
     int nbParties;
+    @Column(name="nbVictoires")
     int nbVictoires;
+    @Column(name="nbMoyVictoires")
     float nbMoyVictoires;
+    @Column(name="scoreMoyen")
     float scoreMoyen;
+    @Column(name="moySuitesGagnees")
     float moySuitesGagnees;
+    @Column(name="moyChouettesVelutesPerdues")
     float moyChouettesVelutesPerdues;
-    
-    
+
     public Joueur(String pseudoJoueur, String motDePasseJoueur, int ageJoueur, String sexeJoueur, String villeJoueur) {
         this.pseudoJoueur = pseudoJoueur;
         this.motDePasseJoueur = motDePasseJoueur;
@@ -67,54 +79,52 @@ public class Joueur {
         this.moySuitesGagnees = moySuitesGagnees;
         this.moyChouettesVelutesPerdues = moyChouettesVelutesPerdues;
     }
-    
-    
 
-    public Long getId() {
+    public Long getIdJoueur() {
         return idJoueur;
     }
 
-    public void setId(Long idJoueur) {
+    public void setIdJoueur(Long idJoueur) {
         this.idJoueur = idJoueur;
     }
 
-    public String getPseudo() {
+    public String getPseudoJoueur() {
         return pseudoJoueur;
     }
 
-    public void setPseudo(String pseudoJoueur) {
+    public void setPseudoJoueur(String pseudoJoueur) {
         this.pseudoJoueur = pseudoJoueur;
     }
 
-    public String getMdp() {
+    public String getMotDePasseJoueur() {
         return motDePasseJoueur;
     }
 
-    public void setMdp(String motDePasseJoueur) {
+    public void setMotDePasseJoueur(String motDePasseJoueur) {
         this.motDePasseJoueur = motDePasseJoueur;
     }
-
-    public int getAge() {
+    
+    public int getAgeJoueur() {
         return ageJoueur;
     }
 
-    public void setAge(int ageJoueur) {
+    public void setAgeJoueur(int ageJoueur) {
         this.ageJoueur = ageJoueur;
     }
 
-    public String getSexe() {
+    public String getSexeJoueur() {
         return sexeJoueur;
     }
 
-    public void setSexe(String sexeJoueur) {
+    public void setSexeJoueur(String sexeJoueur) {
         this.sexeJoueur = sexeJoueur;
     }
 
-    public String getVille() {
+    public String getVilleJoueur() {
         return villeJoueur;
     }
 
-    public void setVille(String villeJoueur) {
+    public void setVilleJoueur(String villeJoueur) {
         this.villeJoueur = villeJoueur;
     }
 
