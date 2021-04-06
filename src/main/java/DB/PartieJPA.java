@@ -16,7 +16,6 @@ import javax.persistence.Query;
 
 public class PartieJPA implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     EntityManagerFactory emf = null;
     EntityManager em = null;
 

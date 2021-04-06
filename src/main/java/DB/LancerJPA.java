@@ -18,7 +18,7 @@ import javax.persistence.Query;
  * @author arnaud
  */
 public class LancerJPA {
-    private static final long serialVersionUID = 1L;
+    
     EntityManagerFactory emf = null;
     EntityManager em = null;
 
