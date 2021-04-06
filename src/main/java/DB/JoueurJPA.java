@@ -6,7 +6,6 @@
 package DB;
 
 import Data.Joueur;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -19,24 +18,24 @@ import javax.persistence.Query;
  *
  * @author arnaud
  */
-public class JoueurJPA implements Serializable {
+public class JoueurJPA {
 
-    private static final long serialVersionUID = 1L;
     EntityManagerFactory emf = null;
     EntityManager em = null;
 
     public JoueurJPA() {
        this.emf = Persistence.createEntityManagerFactory("$objectdb/db/joueur.odb");
        this.em = emf.createEntityManager();
-       this.em.getTransaction().begin();
     }
     
     public void create(Joueur j) {
+        this.em.getTransaction().begin();
         em.persist(j);
         em.getTransaction().commit();
     }
     
     public void update(Joueur j) {
+        this.em.getTransaction().begin();
         Joueur p = em.find(Joueur.class, j.getIdJoueur());
         p.setAgeJoueur(j.getAgeJoueur());
         p.setMotDePasseJoueur(j.getMotDePasseJoueur());
@@ -53,11 +52,13 @@ public class JoueurJPA implements Serializable {
     }
     
     public int delete(Joueur j) {
+        this.em.getTransaction().begin();
         int count = em.createQuery("DELETE FROM Joueur where idJoueur = " + j.getIdJoueur()).executeUpdate();
         return count;
     }
     
     public Set<Joueur> findAll() {
+        this.em.getTransaction().begin();
         Set s = null;
         try{
             Query q2 = em.createQuery("SELECT l FROM Lancer l", Joueur.class);
@@ -70,6 +71,7 @@ public class JoueurJPA implements Serializable {
     
     
     public Joueur find(Long id) {
+        this.em.getTransaction().begin();
         Joueur j = new Joueur();
         try {
             Query q2 = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + id, Joueur.class);

@@ -25,29 +25,32 @@ public class LancerJPA {
     public LancerJPA() {
        this.emf = Persistence.createEntityManagerFactory("$objectdb/db/lancer.odb");
        this.em = emf.createEntityManager();
-       this.em.getTransaction().begin();
     }
     
     public void create(Lancer l) {
+        this.em.getTransaction().begin();
         em.persist(l);
         em.getTransaction().commit();
     }
     
     public void update(Lancer l) {
+        this.em.getTransaction().begin();
         Lancer lancer = em.find(Lancer.class, l.getIdLancer());
         lancer.setValeurDes1(l.getValeurDes1());
         lancer.setValeurDes2(l.getValeurDes2());
         lancer.setValeurDes3(l.getValeurDes3());
-        lancer.setCombinaison(l.getCombinaison());
+        lancer.setInteraction(l.getInteraction());
         em.getTransaction().commit();
     }
     
     public int delete(Lancer l) {
+        this.em.getTransaction().begin();
         int count = em.createQuery("DELETE FROM Lancer where idLancer = " + l.getIdLancer()).executeUpdate();
         return count;
     }
       
     public Set<Lancer> findAll() {
+        this.em.getTransaction().begin();
         Set s = null;
         Lancer l = new Lancer();
         try{
@@ -60,10 +63,10 @@ public class LancerJPA {
     }
     
     public Lancer find(long id) {
+        this.em.getTransaction().begin();
         Lancer l = new Lancer();
         try {
-            Query q2 = em.createQuery("SELECT l FROM Lancer l WHERE idLancer = " + id , Lancer.class);
-            l = (Lancer) q2.getSingleResult();
+            l = em.find(Lancer.class, id);
         } catch(Exception e) {
             System.out.println("Erreur survenue : " + e.getMessage());
         }

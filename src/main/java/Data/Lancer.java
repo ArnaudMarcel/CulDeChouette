@@ -29,27 +29,27 @@ public class Lancer implements Serializable {
     private int valeurDes2;
     @Column(name="valeurDes3")
     private int valeurDes3;
-    @Column(name="combinaison")
-    private String combinaison;
+    @Column(name="interaction")
+    private boolean interaction;
     
     private long idJoueur;
     private long idPartie;
 
-    public Lancer(long idLancer, int valeurDes1, int valeurDes2, int valeurDes3, String combinaison, long idJoueur, long idPartie) {
+    public Lancer(long idLancer, int valeurDes1, int valeurDes2, int valeurDes3, boolean interaction, long idJoueur, long idPartie) {
         this.idLancer = idLancer;
         this.valeurDes1 = valeurDes1;
         this.valeurDes2 = valeurDes2;
         this.valeurDes3 = valeurDes3;
-        this.combinaison = combinaison;
+        this.interaction = interaction;
         this.idJoueur = idJoueur;
         this.idPartie = idPartie;
     }
 
-    public Lancer(int valeurDes1, int valeurDes2, int valeurDes3, String combinaison, long idJoueur, long idPartie) {
+    public Lancer(int valeurDes1, int valeurDes2, int valeurDes3, boolean interaction, long idJoueur, long idPartie) {
         this.valeurDes1 = valeurDes1;
         this.valeurDes2 = valeurDes2;
         this.valeurDes3 = valeurDes3;
-        this.combinaison = combinaison;
+        this.interaction = interaction;
         this.idJoueur = idJoueur;
         this.idPartie = idPartie;
     }
@@ -89,12 +89,12 @@ public class Lancer implements Serializable {
         this.valeurDes3 = valeurDes3;
     }
 
-    public String getCombinaison() {
-        return combinaison;
+    public boolean getInteraction() {
+        return interaction;
     }
 
-    public void setCombinaison(String combinaison) {
-        this.combinaison = combinaison;
+    public void setInteraction(boolean interaction) {
+        this.interaction = interaction;
     }
 
     public long getIdJoueur() {
@@ -115,7 +115,7 @@ public class Lancer implements Serializable {
 
     @Override
     public String toString() {
-        return "Lancer{" + "idLancer=" + idLancer + ", valeurDes1=" + valeurDes1 + ", valeurDes2=" + valeurDes2 + ", valeurDes3=" + valeurDes3 + ", combinaison=" + combinaison + ", idJoueur=" + idJoueur + ", idPartie=" + idPartie + '}';
+        return "Lancer{" + "idLancer=" + idLancer + ", valeurDes1=" + valeurDes1 + ", valeurDes2=" + valeurDes2 + ", valeurDes3=" + valeurDes3 + ", interaction=" + interaction + ", idJoueur=" + idJoueur + ", idPartie=" + idPartie + '}';
     }
 
     

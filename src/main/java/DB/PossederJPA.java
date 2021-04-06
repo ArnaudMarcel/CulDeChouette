@@ -23,15 +23,16 @@ public class PossederJPA implements Serializable {
     public PossederJPA() {
         this.emf = Persistence.createEntityManagerFactory("$objectdb/db/posseder.odb");
         this.em = emf.createEntityManager();
-        this.em.getTransaction().begin();
     }
 
     public void create(Posseder p) {
+        this.em.getTransaction().begin();
         em.persist(p);
         em.getTransaction().commit();
     }
 
     public Set<Posseder> findAll() {
+        this.em.getTransaction().begin();
         Set s = null;
         Posseder p = new Posseder();
         try {
@@ -42,8 +43,22 @@ public class PossederJPA implements Serializable {
         }
         return s;
     }
+    
+    public Set<Posseder> findAll(long id) {
+        this.em.getTransaction().begin();
+        Set s = null;
+        Posseder p = new Posseder();
+        try {
+            Query q = em.createQuery("SELECT p FROM Posseder p WHERE idPartie = " + id, Posseder.class);
+            s = new HashSet(q.getResultList());
+        } catch (Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return s;
+    }
 
     public Posseder find(Posseder posseder) {
+        this.em.getTransaction().begin();
         Posseder p = new Posseder();
         try {
             Query q = em.createQuery("SELECT p FROM Posseder p WHERE idJoueur = " + posseder.getIdJoueur() + " AND idPartie = " + posseder.getIdPartie(), Posseder.class);

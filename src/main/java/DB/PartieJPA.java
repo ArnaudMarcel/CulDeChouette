@@ -23,15 +23,16 @@ public class PartieJPA implements Serializable {
     public PartieJPA() {
         this.emf = Persistence.createEntityManagerFactory("$objectdb/db/partie.odb");
         this.em = emf.createEntityManager();
-        this.em.getTransaction().begin();
     }
 
     public void create(Partie p) {
+        this.em.getTransaction().begin();
         em.persist(p);
         em.getTransaction().commit();
     }
 
     public Set<Partie> findAll() {
+        this.em.getTransaction().begin();
         Set s = null;
         Partie p = new Partie();
         try {
@@ -44,6 +45,7 @@ public class PartieJPA implements Serializable {
     }
 
     public Partie find(Long id) {
+        this.em.getTransaction().begin();
         Partie p = new Partie();
         try {
             Query q = em.createQuery("SELECT p FROM Partie p WHERE idPartie = " + id, Partie.class);
@@ -63,6 +65,7 @@ public class PartieJPA implements Serializable {
     }
 
     public int delete(Partie p) {
+        this.em.getTransaction().begin();
         int count = em.createQuery("DELETE FROM Partie where idLancer = " + p.getIdPartie()).executeUpdate();
         return count;
     }

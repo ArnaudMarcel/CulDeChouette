@@ -44,13 +44,32 @@ public class Joueur implements Serializable {
     float moySuitesGagnees;
     @Column(name="moyChouettesVelutesPerdues")
     float moyChouettesVelutesPerdues;
+    @Column(name="disponible")
+    boolean disponible;
 
+    public Joueur(Long idJoueur, String pseudoJoueur, String motDePasseJoueur, int ageJoueur, String sexeJoueur, String villeJoueur, int nbParties, int nbVictoires, float nbMoyVictoires, float scoreMoyen, float moySuitesGagnees, float moyChouettesVelutesPerdues, boolean disponible) {
+        this.idJoueur = idJoueur;
+        this.pseudoJoueur = pseudoJoueur;
+        this.motDePasseJoueur = motDePasseJoueur;
+        this.ageJoueur = ageJoueur;
+        this.sexeJoueur = sexeJoueur;
+        this.villeJoueur = villeJoueur;
+        this.nbParties = nbParties;
+        this.nbVictoires = nbVictoires;
+        this.nbMoyVictoires = nbMoyVictoires;
+        this.scoreMoyen = scoreMoyen;
+        this.moySuitesGagnees = moySuitesGagnees;
+        this.moyChouettesVelutesPerdues = moyChouettesVelutesPerdues;
+        this.disponible = disponible;
+    }
+    
     public Joueur(String pseudoJoueur, String motDePasseJoueur, int ageJoueur, String sexeJoueur, String villeJoueur) {
         this.pseudoJoueur = pseudoJoueur;
         this.motDePasseJoueur = motDePasseJoueur;
         this.ageJoueur = ageJoueur;
         this.sexeJoueur = sexeJoueur;
         this.villeJoueur = villeJoueur;
+        this.disponible = true;       
     }
 
     public Joueur(Long idJoueur, String pseudoJoueur, String motDePasseJoueur, int ageJoueur, String sexeJoueur, String villeJoueur) {
@@ -60,6 +79,8 @@ public class Joueur implements Serializable {
         this.ageJoueur = ageJoueur;
         this.sexeJoueur = sexeJoueur;
         this.villeJoueur = villeJoueur;
+        this.disponible = true;       
+
     }
 
     public Joueur() {
@@ -78,6 +99,7 @@ public class Joueur implements Serializable {
         this.scoreMoyen = scoreMoyen;
         this.moySuitesGagnees = moySuitesGagnees;
         this.moyChouettesVelutesPerdues = moyChouettesVelutesPerdues;
+        this.disponible = true;
     }
 
     public Long getIdJoueur() {
@@ -175,10 +197,18 @@ public class Joueur implements Serializable {
     public void setMoyChouettesVelutesPerdues(float moyChouettesVelutesPerdues) {
         this.moyChouettesVelutesPerdues = moyChouettesVelutesPerdues;
     }
+    
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
 
     @Override
     public String toString() {
         return "Joueur{" + "idJoueur=" + idJoueur + ", pseudoJoueur=" + pseudoJoueur + ", motDePasseJoueur=" + motDePasseJoueur + ", ageJoueur=" + ageJoueur + ", sexeJoueur=" + sexeJoueur + ", villeJoueur=" + villeJoueur + ", nbParties=" + nbParties + ", nbVictoires=" + nbVictoires + ", nbMoyVictoires=" + nbMoyVictoires + ", scoreMoyen=" + scoreMoyen + ", moySuitesGagnees=" + moySuitesGagnees + ", moyChouettesVelutesPerdues=" + moyChouettesVelutesPerdues + '}';
     }
-
 }
+
