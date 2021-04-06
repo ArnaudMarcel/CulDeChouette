@@ -62,6 +62,46 @@ public class LancerJPA {
         return s;
     }
     
+    public Set<Lancer> findAllByPartie(long idP) {
+        this.em.getTransaction().begin();
+        Set s = null;
+        Lancer l = new Lancer();
+        try{
+            Query q2 = em.createQuery("SELECT l FROM Lancer l WHERE idPartie = " + idP, Lancer.class);
+            s = new HashSet(q2.getResultList());
+        } catch(Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return s;
+    }
+    
+    public Set<Lancer> findAllByJoueur(long idJ) {
+        this.em.getTransaction().begin();
+        Set s = null;
+        Lancer l = new Lancer();
+        try{
+            Query q2 = em.createQuery("SELECT l FROM Lancer l WHERE idJoueur =" + idJ, Lancer.class);
+            s = new HashSet(q2.getResultList());
+        } catch(Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return s;
+    }
+    
+    public Set<Lancer> findAll(long idJ, long idP) {
+        this.em.getTransaction().begin();
+        Set s = null;
+        Lancer l = new Lancer();
+        try{
+            Query q2 = em.createQuery("SELECT l FROM Lancer l WHERE idJoueur = "
+                    + idJ + " AND idPartie = " + idP, Lancer.class);
+            s = new HashSet(q2.getResultList());
+        } catch(Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return s;
+    }
+    
     public Lancer find(long id) {
         this.em.getTransaction().begin();
         Lancer l = new Lancer();

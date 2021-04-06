@@ -44,12 +44,25 @@ public class PossederJPA implements Serializable {
         return s;
     }
     
-    public Set<Posseder> findAll(long id) {
+    public Set<Posseder> findAllByPartie(long idP) {
         this.em.getTransaction().begin();
         Set s = null;
         Posseder p = new Posseder();
         try {
-            Query q = em.createQuery("SELECT p FROM Posseder p WHERE idPartie = " + id, Posseder.class);
+            Query q = em.createQuery("SELECT p FROM Posseder p WHERE idPartie = " + idP, Posseder.class);
+            s = new HashSet(q.getResultList());
+        } catch (Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+        }
+        return s;
+    }
+    
+    public Set<Posseder> findAllByJoueur(long idJ) {
+        this.em.getTransaction().begin();
+        Set s = null;
+        Posseder p = new Posseder();
+        try {
+            Query q = em.createQuery("SELECT p FROM Posseder p WHERE idJoueur = " + idJ, Posseder.class);
             s = new HashSet(q.getResultList());
         } catch (Exception e) {
             System.out.println("Erreur survenue : " + e.getMessage());
