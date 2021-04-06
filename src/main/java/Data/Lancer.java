@@ -23,21 +23,21 @@ public class Lancer implements Serializable {
     @Column(name="IdLancer")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idLancer;
+    long idLancer;
     @Column(name="valeurDes1")
-    private int valeurDes1;
+    int valeurDes1;
     @Column(name="valeurDes2")
-    private int valeurDes2;
+    int valeurDes2;
     @Column(name="valeurDes3")
-    private int valeurDes3;
+    int valeurDes3;
     @Column(name="interaction")
-    private boolean interaction;
+    boolean interaction;
     @Column(name="idJoueur")
     @OneToOne
-    private long idJoueur;
+    long idJoueur;
     @Column(name="idPartie")
     @OneToOne
-    private long idPartie;
+    long idPartie;
 
     public Lancer(long idLancer, int valeurDes1, int valeurDes2, int valeurDes3, boolean interaction, long idJoueur, long idPartie) {
         this.idLancer = idLancer;

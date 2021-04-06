@@ -21,7 +21,7 @@ public class Joueur implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long idJoueur;
+    Long idJoueur;
     @Column(name="pseudoJoueur")
     String pseudoJoueur;
     @Column(name="motDePasseJoueur")

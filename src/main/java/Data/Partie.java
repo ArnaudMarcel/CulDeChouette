@@ -17,7 +17,7 @@ public class Partie{
     @Column(name="idPartie")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long idPartie;
+    Long idPartie;
     @Column(name="heurePartie")
     String heurePartie;
     @Column(name="nbPointsAAtteindrePartie")

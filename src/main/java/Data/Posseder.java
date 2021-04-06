@@ -17,11 +17,11 @@ public class Posseder implements Serializable {
     @Column(name="idJoueur")
     @Id
     @OneToOne
-    private Long idJoueur;
+    Long idJoueur;
     @Column(name="idPartie")
     @Id
     @OneToOne
-    private Long idPartie;
+    Long idPartie;
     @Column(name="nbPoints")
     int nbPoints;
     @Column(name="nbSuitesGagnees")
