@@ -9,15 +9,18 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Posseder implements Serializable {
     
     @Column(name="idJoueur")
     @Id
+    @OneToOne
     private Long idJoueur;
     @Column(name="idPartie")
     @Id
+    @OneToOne
     private Long idPartie;
     @Column(name="nbPoints")
     int nbPoints;

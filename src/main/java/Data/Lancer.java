@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 
 /**
@@ -31,8 +32,11 @@ public class Lancer implements Serializable {
     private int valeurDes3;
     @Column(name="interaction")
     private boolean interaction;
-    
+    @Column(name="idJoueur")
+    @OneToOne
     private long idJoueur;
+    @Column(name="idPartie")
+    @OneToOne
     private long idPartie;
 
     public Lancer(long idLancer, int valeurDes1, int valeurDes2, int valeurDes3, boolean interaction, long idJoueur, long idPartie) {
