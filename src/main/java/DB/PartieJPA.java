@@ -26,12 +26,11 @@ public class PartieJPA implements Serializable {
 
     public void create(Partie p) {
         this.em.getTransaction().begin();
-        em.persist(p);
-        em.getTransaction().commit();
+        this.em.persist(p);
+        this.em.getTransaction().commit();
     }
 
     public Set<Partie> findAll() {
-        this.em.getTransaction().begin();
         Set s = null;
         Partie p = new Partie();
         try {
@@ -44,7 +43,6 @@ public class PartieJPA implements Serializable {
     }
 
     public Partie find(Long id) {
-        this.em.getTransaction().begin();
         Partie p = new Partie();
         try {
             Query q = em.createQuery("SELECT p FROM Partie p WHERE idPartie = " + id, Partie.class);
@@ -57,15 +55,16 @@ public class PartieJPA implements Serializable {
 
     public void update(Partie p) {
         this.em.getTransaction().begin();
-        Partie partie = em.find(Partie.class, p.getIdPartie());
+        Partie partie = this.em.find(Partie.class, p.getIdPartie());
         partie.setHeurePartie(p.getHeurePartie());
         partie.setNbPointsAAtteindrePartie(p.getNbPointsAAtteindrePartie());
-        em.getTransaction().commit();
+        this.em.getTransaction().commit();
     }
 
     public int delete(Partie p) {
         this.em.getTransaction().begin();
-        int count = em.createQuery("DELETE FROM Partie where idLancer = " + p.getIdPartie()).executeUpdate();
+        int count = this.em.createQuery("DELETE FROM Partie where idPartie = " + p.getIdPartie()).executeUpdate();
+        this.em.getTransaction().commit();
         return count;
     }
 }

@@ -30,13 +30,15 @@ public class JoueurJPA {
     
     public void create(Joueur j) {
         this.em.getTransaction().begin();
-        em.persist(j);
-        em.getTransaction().commit();
+        this.em.persist(j);
+        this.em.getTransaction().commit();
     }
     
     public void update(Joueur j) {
         this.em.getTransaction().begin();
-        Joueur p = em.find(Joueur.class, j.getIdJoueur());
+        Query q = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + j.getIdJoueur(), Joueur.class);
+        Joueur p = new Joueur();
+        p = (Joueur) q.getSingleResult();
         p.setAgeJoueur(j.getAgeJoueur());
         p.setMotDePasseJoueur(j.getMotDePasseJoueur());
         p.setMoyChouettesVelutesPerdues(j.getMoyChouettesVelutesPerdues());
@@ -48,20 +50,20 @@ public class JoueurJPA {
         p.setScoreMoyen(j.getScoreMoyen());
         p.setSexeJoueur(j.getSexeJoueur());
         p.setVilleJoueur(j.getVilleJoueur());
-        em.getTransaction().commit();
+        this.em.getTransaction().commit();
     }
     
     public int delete(Joueur j) {
         this.em.getTransaction().begin();
         int count = em.createQuery("DELETE FROM Joueur where idJoueur = " + j.getIdJoueur()).executeUpdate();
+        this.em.getTransaction().commit();
         return count;
     }
     
     public Set<Joueur> findAll() {
-        this.em.getTransaction().begin();
         Set s = null;
         try{
-            Query q2 = em.createQuery("SELECT l FROM Lancer l", Joueur.class);
+            Query q2 = this.em.createQuery("SELECT j FROM Joueur j", Joueur.class);
             s = new HashSet(q2.getResultList());
         } catch(Exception e) {
             System.out.println("Erreur survenue : " + e.getMessage());
@@ -71,7 +73,6 @@ public class JoueurJPA {
     
     
     public Joueur find(Long id) {
-        this.em.getTransaction().begin();
         Joueur j = new Joueur();
         try {
             Query q2 = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + id, Joueur.class);

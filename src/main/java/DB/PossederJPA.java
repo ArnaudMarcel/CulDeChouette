@@ -30,7 +30,6 @@ public class PossederJPA {
     }
 
     public Set<Posseder> findAll() {
-        this.em.getTransaction().begin();
         Set s = null;
         Posseder p = new Posseder();
         try {
@@ -43,7 +42,6 @@ public class PossederJPA {
     }
     
     public Set<Posseder> findAllByPartie(long idP) {
-        this.em.getTransaction().begin();
         Set s = null;
         Posseder p = new Posseder();
         try {
@@ -56,7 +54,6 @@ public class PossederJPA {
     }
     
     public Set<Posseder> findAllByJoueur(long idJ) {
-        this.em.getTransaction().begin();
         Set s = null;
         Posseder p = new Posseder();
         try {
@@ -69,7 +66,6 @@ public class PossederJPA {
     }
 
     public Posseder find(Posseder posseder) {
-        this.em.getTransaction().begin();
         Posseder p = new Posseder();
         try {
             Query q = em.createQuery("SELECT p FROM Posseder p WHERE idJoueur = " + posseder.getIdJoueur() + " AND idPartie = " + posseder.getIdPartie(), Posseder.class);
@@ -89,12 +85,13 @@ public class PossederJPA {
         posseder.setNbSuitesGagnees(p.getNbSuitesGagnees());
         posseder.setNbChouettesVelutesGagnees(p.getNbChouettesVelutesGagnees());
         posseder.setEstGagnant(p.isEstGagnant());
-        em.getTransaction().commit();
+        this.em.getTransaction().commit();
     }
 
     public int delete(Posseder p) {
         this.em.getTransaction().begin();
         int count = em.createQuery("DELETE FROM Posseder where idPartie = " + p.getIdPartie() + " AND idJoueur = " + p.getIdJoueur()).executeUpdate();
+        this.em.getTransaction().commit();
         return count;
     }
 
