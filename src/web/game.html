@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Le Cul de Chouette</title>
+    <meta name="author" content="Eribon Hugo">
+    <meta name="description" content="Le cul de la chouette, par Hugo Eribon">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link href="./css/main.css" rel="stylesheet" type="text/css" />
+    <link href="./css/game.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/x-icon" href="./img/chouette.png" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+</head>
+
+<body>
+    <main>
+        <center>
+            <img src="img/logo.png" alt="logo.png" id="logo">
+            <div id="fieldset">
+                <fieldset>
+                    <legend>La Chouette</legend>
+                    <img src="img/1.png" id="des1" class="fadeIn">
+                    <img src="img/1.png" id="des2" class="fadeIn">
+                </fieldset>
+                <fieldset>
+                    <legend>Le Cul</legend>
+                    <img src="img/1.png" id="des3" class="fadeIn">
+                </fieldset>
+            </div>
+            <input type="button" value="Lancer les dès" id="buttonDes" onClick="rollDices()">
+            <div id="trapeze">
+                <div id="score">0 / 343</div>
+            </div>
+        </center>
+    </main>
+    <script src="./js/game.js"></script>
+</body>
+
+</html>
