@@ -1,0 +1,41 @@
+body{
+font-size: 25px;
+}
+
+#logo {
+    width: 300px;
+    margin-top: 25px;
+}
+
+fieldset {
+    border: 2px solid white;
+    padding: 25px;
+    width: 40%;
+    display: inline-block;
+    margin: 10px;
+    text-align: justify;
+    min-height: 50vh;
+}
+
+legend {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+table{
+    width: 100%;
+    text-align: center;
+}
+
+tr{
+    border: 1px white solid;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    text-decoration: underline;
+}
