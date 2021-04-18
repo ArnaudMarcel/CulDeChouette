@@ -28,10 +28,14 @@ public class JoueurJPA {
        this.em = emf.createEntityManager();
     }
     
-    public void create(Joueur j) {
-        this.em.getTransaction().begin();
-        this.em.persist(j);
-        this.em.getTransaction().commit();
+    public void create(Joueur j) throws SpeudoAlreadyExistException {
+        if (find(j.getPseudoJoueur()) == null) {
+            this.em.getTransaction().begin();
+            this.em.persist(j);
+            this.em.getTransaction().commit();
+        } else {
+            throw new SpeudoAlreadyExistException("Pseudo existant : " + j.getPseudoJoueur());
+        }
     }
     
     public void update(Joueur j) {
@@ -79,6 +83,20 @@ public class JoueurJPA {
             j = (Joueur) q2.getSingleResult();
         } catch(Exception e) {
             System.out.println("Erreur survenue : " + e.getMessage());
+            return null;
+        }
+        return j;
+    }
+    
+    public Joueur find(String pseudo) {
+        System.out.println(pseudo);
+        Joueur j = new Joueur();
+        try {
+            Query q2 = em.createQuery("SELECT j FROM Joueur j WHERE j.pseudoJoueur = \"" + pseudo + "\"", Joueur.class);
+            j = (Joueur) q2.getSingleResult();
+        } catch(Exception e) {
+            System.out.println("Erreur survenue : " + e.getMessage());
+            return null;
         }
         return j;
     }

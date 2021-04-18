@@ -9,7 +9,7 @@ class CDCsocket {
         this.service.onopen = () => {
             window.alert("service.onopen...");
             let response = window.confirm(this.service.url + " just opened... Say 'Hi!'?");
-            if (response) this.service.send(JSON.stringify({Response: "connect"}));
+            if (response) this.service.send(JSON.stringify({id: "handShacking"}));
         };
 
         this.service.onclose = (event) => { /*:CloseEvent*/
@@ -26,12 +26,43 @@ class CDCsocket {
         this.service.send(JSON.stringify(
             {
                 id: "creation",
-                pseudo: pseudo,
-                password: mdp,
-                sexe: sexe,
-                city: ville,
-                age: age,
-            }));
+                pseudoJoueur: pseudo,
+                motDePasseJoueur: mdp,
+                sexeJoueur: sexe,
+                villeJoueur: ville,
+                ageJoueur: age,
+            })
+        );
+
+        this.service.onmessage = (event) => {
+            console.log(event.data);
+            event.data === "Creation ok" ? loadIndexConnected() : 
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ce pseudo est déjà pris !'
+                });
+        };       
+    }
+
+    static _connexionJoueur(pseudo, mdp) {
+        this.service.send(JSON.stringify(
+            {
+                id: "connexion",
+                pseudoJoueur: pseudo,
+                motDePasseJoueur: mdp,
+            })
+        );
+
+        this.service.onmessage = (event) => {
+            console.log(event.data);
+            event.data === "Connexion ok" ? loadIndexConnected() : 
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Mot de passe incorrect'
+                });
+        };
     }
 }
 

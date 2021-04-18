@@ -4,7 +4,44 @@ function loadGame() {
 }
 
 function loadConnexion() {
-    
+    document.body.innerHTML = `
+    <main>
+        <center>
+            <img src="img/logo.png" alt="logo.png" id="logo">
+            <div id="connexion">
+                <h1>Connexion</h1>
+                <p>Connectez vous à votre compte.</p><br>
+                <form>
+                    <label for="pseudo">Pseudo :</label>
+                    <input id="pseudo" name="psuedo" type="text" required><br><br>
+                    <label for="mdp">Mot de passe :</label>
+                    <input id="mdp" name="mdp" type="password" required><br><br>
+                    <input type="reset" value="Annuler" id="button">
+                    <input type="button" value="Connexion" id="button">
+                </form>
+                <br><br>
+                <a id="creation">Je n'ai pas encore de compte.</a>
+            </div><br><br>
+        </center>
+    </main>`;
+
+    document.addEventListener('click', event => {
+        switch (event.target.value) {
+            case 'creation':
+                loadCreation();
+                break;
+
+            case 'Annuler':
+                loadIndex();
+                break;
+            
+            case 'Connexion':
+                let pseudo = document.getElementById('pseudo').value;
+                let mdp = document.getElementById('mdp').value;
+                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp) : '';
+                break;
+        }
+    });
 }
 
 function loadCreation() {
@@ -22,7 +59,7 @@ function loadCreation() {
                 <input id="mdp" type="password" required><br><br>
                 <label for="sexe">Sexe :</label>
                 <div id="radio">
-                <input type="radio" id="sexe" /> Homme <input type="radio" name="sexe" /> Femme
+                <input type="checkbox" id="Homme" class="gender"/> Homme <input type="checkbox" id="Femme" class="gender"/> Femme
                 </div><br>
                 <label for="ville">Ville :</label>
                 <input id="ville" type="text" required><br><br>
@@ -36,6 +73,25 @@ function loadCreation() {
     </center>
     </main>`;
 
+    let sexe = null;
+    [].slice.call(document.getElementsByClassName('gender')).forEach(elt => {
+        elt.addEventListener('click', event => {
+            sexe = event.target.id;
+            switch (event.target.id) {
+                case 'Homme':
+                    document.getElementById('Homme').checked = true;
+                    document.getElementById('Femme').checked = false;
+                    break;
+    
+                case 'Femme':
+                    document.getElementById('Femme').checked = true;
+                    document.getElementById('Homme').checked = false;
+                    break;
+                    
+            }
+        });
+    });
+
     let form = document.addEventListener('click', event => {
         switch (event.target.value) {
             case 'Annuler':
@@ -43,18 +99,14 @@ function loadCreation() {
                 break;
             
             case 'Valider':
-                console.log("tetetete1");
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
-                let sexe = document.getElementById('sexe').value;
                 let ville = document.getElementById('ville').value;
-                let age = document.getElementById('age').value;
-                console.log("tetetete");
-                CDCsocket._sendCreation(pseudo, mdp, sexe, ville, age);
-                loadIndexConnected();
+                let ageJ = document.getElementById('age').value;
+                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ) : '';
                 break;
         }
-    })
+    });
 }
 
 function loadIndexConnected() {
@@ -65,7 +117,8 @@ function loadIndexConnected() {
             <div id="menu">
                 <ul>
                     <li>
-                        <a id="game">Jouer</a><br><br>
+                        <a id="join_game">Rejoindre une partie</a><br><br>
+                        <a id="create_game">Créer une partie</a><br><br>
                         <a id="regles">Règles du jeu</a><br><br>
                     </li>
                 </ul>
@@ -154,16 +207,27 @@ function loadRegles() {
                 le caillou !". Le premier à crier gagne les points de la velute.
             </p>
         </fieldset><br><br>
-        <a href="./index.html">Retour</a>
+        <a id="back">Retour</a>
     </div>
-</center>`;
+    </center>`;
+
+    document.getElementById('back').addEventListener('click', event => {
+        loadIndex();
+    });
 }
 
+function loadCreateGame() {
+
+}
 
 let pageManager = document.addEventListener('click', event => {
     switch (event.target.id) {
-        case 'game':
+        case 'join_game':
             loadGame();
+            break;
+
+        case 'create_game':
+            loadCreateGame();
             break;
 
         case 'connexion':

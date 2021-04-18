@@ -5,9 +5,14 @@
  */
 package Server;
 
+import DB.JoueurJPA;
+import DB.SpeudoAlreadyExistException;
+import Data.Joueur;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.websocket.RemoteEndpoint.Basic;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  *
@@ -19,6 +24,8 @@ public class WebSocket {
     @javax.websocket.server.ServerEndpoint(value = "/WebSocket")
     
     public static class My_ServerEndpoint {
+        private GsonBuilder builder = new GsonBuilder();
+        private Gson gson = builder.create();
 
         @javax.websocket.OnClose
         public void onClose(javax.websocket.Session session, javax.websocket.CloseReason close_reason) {
@@ -31,8 +38,38 @@ public class WebSocket {
         }
 
         @javax.websocket.OnMessage
-        public void onMessage(javax.websocket.Session session, String message) {
+        public void onMessage(javax.websocket.Session session, String message) throws IOException {
             System.out.println("Message from JavaScript: " + message);
+            String response = "";
+            JoueurJPA dbJoueur = new JoueurJPA();
+
+            if (message.contains("\"id\":\"creation\"")) {
+                response = "Creation ok";
+                Joueur j = this.gson.fromJson(message, Joueur.class);
+                try {
+                    dbJoueur.create(j);
+                } catch (SpeudoAlreadyExistException e) {
+                    response = "Creation failed";
+                }
+            }
+            
+            if (message.contains("\"id\":\"connexion\"")) {
+                
+                Joueur j = this.gson.fromJson(message, Joueur.class);
+                try {
+                    String tamp[] = message.split("\"");
+                    String mdp = tamp[tamp.length-2];
+                    if (mdp.equals(dbJoueur.find(j.getPseudoJoueur()).getMotDePasseJoueur())) {
+                        response = "Connexion ok";
+                    }
+                    
+                } catch (Exception e) {
+                    response = "Creation failed";
+                }
+            }
+            
+            session.getBasicRemote().sendText(response);
+
         }
 
         @javax.websocket.OnOpen
