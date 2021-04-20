@@ -25,7 +25,7 @@ class CDCsocket {
     static _sendCreation(pseudo, mdp, sexe, ville, age) {
         this.service.send(JSON.stringify(
             {
-                id: "creation",
+                id: "creationJoueur",
                 pseudoJoueur: pseudo,
                 motDePasseJoueur: mdp,
                 sexeJoueur: sexe,
@@ -35,7 +35,6 @@ class CDCsocket {
         );
 
         this.service.onmessage = (event) => {
-            console.log(event.data);
             event.data === "Creation ok" ? loadIndexConnected() : 
                 Swal.fire({
                     icon: 'error',
@@ -55,13 +54,33 @@ class CDCsocket {
         );
 
         this.service.onmessage = (event) => {
-            console.log(event.data);
             event.data === "Connexion ok" ? loadIndexConnected() : 
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Mot de passe incorrect'
                 });
+        };
+    }
+
+    static _creerPartie(pts, myInter) {
+        this.service.send(JSON.stringify({
+            id: 'creationPartie',
+            heurePartie: new Date().toLocaleString(),
+            nbPointsAAtteindrePartie: pts,
+        }));
+
+        this.service.onmessage = (event) => {
+            if (event.data === 'Creation game failed') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur survenue...',
+                    confirmButtonText: 'retour',
+                }).then(() => {
+                    clearInterval(myInter);
+                    loadIndexConnected();
+                });
+            }
         };
     }
 }

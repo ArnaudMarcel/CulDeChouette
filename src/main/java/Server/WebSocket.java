@@ -20,7 +20,7 @@ import com.google.gson.GsonBuilder;
  */
 public class WebSocket {
     
-    private static ArrayList<Basic> listeWS = new ArrayList<>();
+    private static ArrayList<Joueur> listeJoueurs = new ArrayList<>();
     @javax.websocket.server.ServerEndpoint(value = "/WebSocket")
     
     public static class My_ServerEndpoint {
@@ -43,7 +43,7 @@ public class WebSocket {
             String response = "";
             JoueurJPA dbJoueur = new JoueurJPA();
 
-            if (message.contains("\"id\":\"creation\"")) {
+            if (message.contains("\"id\":\"creationJoueur\"")) {
                 response = "Creation ok";
                 Joueur j = this.gson.fromJson(message, Joueur.class);
                 try {
@@ -59,15 +59,19 @@ public class WebSocket {
                 try {
                     String tamp[] = message.split("\"");
                     String mdp = tamp[tamp.length-2];
-                    if (mdp.equals(dbJoueur.find(j.getPseudoJoueur()).getMotDePasseJoueur())) {
+                    Joueur realJoueur = dbJoueur.find(j.getPseudoJoueur());
+                    if (mdp.equals(dbJoueur.find(realJoueur.getPseudoJoueur()).getMotDePasseJoueur())) {
+                        WebSocket.listeJoueurs.add(realJoueur);
                         response = "Connexion ok";
                     }
-                    
                 } catch (Exception e) {
-                    response = "Creation failed";
+                    response = "Creation joueur failed";
                 }
             }
             
+            if (message.contains("\"id\":\"creationPartie\"")) {
+                response = "Creation game failed";
+            }
             session.getBasicRemote().sendText(response);
 
         }
@@ -75,11 +79,6 @@ public class WebSocket {
         @javax.websocket.OnOpen
         public void onOpen(javax.websocket.Session session) throws java.io.IOException {
             session.getBasicRemote().sendText("{Handshaking: \"Yes\"}");
-            WebSocket.listeWS.add(session.getBasicRemote());
-        }
-        
-        private void itemRequest(javax.websocket.Session session, String request){
-            System.out.println("Seeking this item..." + request);
         }
     }
 }

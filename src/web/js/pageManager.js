@@ -92,7 +92,7 @@ function loadCreation() {
         });
     });
 
-    let form = document.addEventListener('click', event => {
+    document.addEventListener('click', event => {
         switch (event.target.value) {
             case 'Annuler':
                 loadIndex();
@@ -216,7 +216,82 @@ function loadRegles() {
     });
 }
 
+function getPointsGame(myInter) {
+    const inputValue = 343;
+    const inputStep = 1;
+    Swal.fire({
+        icon: 'question',
+        html: `<h2 style="font-weight:lighter; font-size:23px;">Quel score devez vous atteindre pour gagner la partie ?</h2><br>
+    <input
+      type="number"
+      value="${inputValue}"
+      step="${inputStep}"
+      class="swal2-input"
+      id="range-value">`,
+        input: 'range',
+        inputValue,
+        inputAttributes: {
+            min: 50,
+            max: 1000,
+            step: inputStep
+        },
+        confirmButtonText: 'Valider',
+        confirmButtonColor: 'rgb(0, 151, 0)',
+        didOpen: () => {
+            const inputRange = Swal.getInput();
+            const inputNumber = Swal.getContent().querySelector('#range-value');
+
+            // remove default output
+            inputRange.nextElementSibling.style.display = 'none';
+            inputRange.style.width = '100%';
+
+            // sync input[type=number] with input[type=range]
+            inputRange.addEventListener('input', () => {
+                inputNumber.value = inputRange.value;
+            })
+
+            // sync input[type=range] with input[type=number]
+            inputNumber.addEventListener('change', () => {
+                inputRange.value = inputNumber.value;
+            })
+        }
+    }).then(function (result) {
+        if (result.value) {
+            CDCsocket._creerPartie(result.value, myInter);
+            Swal.fire({
+                html: '<br><h2 style="font-weight:lighter; font-size:23px;">Le score à atteindre pour cette partie est de ' + result.value + '.</h2><br>',
+                confirmButtonText: 'Valider',
+                confirmButtonColor: 'rgb(0, 151, 0)'
+            });
+        }
+    });
+}
+
 function loadCreateGame() {
+
+    document.body.innerHTML = `<main>
+    <center>
+        <img src="img/logo.png" alt="logo.png" id="logo">
+        <div id="menu">
+            <ul>
+                <li>
+                    <h1>Cul de chouette</h1><br>
+                    <h5 id="waiting">En attente de joueur</h5><br>
+                </li>
+            </ul>
+        </div>
+    </center>
+    </main>`;
+
+    let wait = 'En attente de joueur';
+    let pts = '';
+    var myInter = setInterval(() => {
+        pts += '.';
+        if (pts.length > 3) pts = '';
+        document.getElementById('waiting').innerHTML = `<h5 id="waiting">${wait}${pts}</h5>`;
+    }, 400);
+
+    getPointsGame(myInter);
 
 }
 
