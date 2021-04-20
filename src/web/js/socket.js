@@ -7,18 +7,19 @@ class CDCsocket {
         this.service = new WebSocket("ws://localhost:8080/culDeChouette/WebSocket");
         
         this.service.onopen = () => {
-            window.alert("service.onopen...");
-            let response = window.confirm(this.service.url + " just opened... Say 'Hi!'?");
-            if (response) this.service.send(JSON.stringify({id: "handShacking"}));
+            this.service.send(JSON.stringify({id: "handShacking"}));
         };
 
-        this.service.onclose = (event) => { /*:CloseEvent*/
+        this.service.onclose = (event) => {
             console.log("service.onclose... " + event.code);
-            window.alert("Bye! See you later...");
         };
 
         this.service.onerror = () => {
-            window.alert("service.onerror...");
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Connexion avec le serveur perdue'
+            });
         };
     }
 
@@ -35,12 +36,15 @@ class CDCsocket {
         );
 
         this.service.onmessage = (event) => {
-            event.data === "Creation ok" ? loadIndexConnected() : 
+            if (event.data != "Creation failed") {
+                loadIndexConnected();
+            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Ce pseudo est déjà pris !'
                 });
+            }
         };       
     }
 
@@ -53,17 +57,21 @@ class CDCsocket {
             })
         );
 
+
         this.service.onmessage = (event) => {
-            event.data === "Connexion ok" ? loadIndexConnected() : 
+            if (event.data != "Connexion failed") {
+                loadIndexConnected();
+            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Mot de passe incorrect'
                 });
+            }
         };
     }
 
-    static _creerPartie(pts, myInter) {
+    static _creerPartie(pts) {
         this.service.send(JSON.stringify({
             id: 'creationPartie',
             heurePartie: new Date().toLocaleString(),
@@ -77,11 +85,44 @@ class CDCsocket {
                     title: 'Erreur survenue...',
                     confirmButtonText: 'retour',
                 }).then(() => {
-                    clearInterval(myInter);
                     loadIndexConnected();
                 });
-            }
+            } 
         };
+    }
+
+    static _getJoueurs(currentPlayer) {
+        this.service.send(JSON.stringify({
+            id: 'Joueurliste',
+        }));
+
+        this.service.onmessage = (event) => {
+            let joueurs = event.data.slice(1, event.data.length-1).split(', ');
+            let htmlarray = '';
+            joueurs.forEach(elt => {
+                currentPlayer != elt ?
+                htmlarray += `<tr>
+                <td>
+                    ${elt}
+                </td>
+                <td>
+                    <button>Inviter</button>
+                </td>
+                </tr>` : ``;
+            });
+            document.getElementById('invitations').innerHTML = htmlarray;
+        };
+    }
+
+    static _disconnect(pseudo = null) {
+        this.service.send(JSON.stringify({
+            id: 'disconnect',
+            pseudoJoueur: pseudo
+        }));
+    }
+
+    static _getJoueurs() {
+        
     }
 }
 

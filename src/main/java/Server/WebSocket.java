@@ -44,10 +44,11 @@ public class WebSocket {
             JoueurJPA dbJoueur = new JoueurJPA();
 
             if (message.contains("\"id\":\"creationJoueur\"")) {
-                response = "Creation ok";
                 Joueur j = this.gson.fromJson(message, Joueur.class);
                 try {
                     dbJoueur.create(j);
+                    WebSocket.listeJoueurs.add(j);
+                    response = j.getPseudoJoueur();
                 } catch (SpeudoAlreadyExistException e) {
                     response = "Creation failed";
                 }
@@ -62,7 +63,7 @@ public class WebSocket {
                     Joueur realJoueur = dbJoueur.find(j.getPseudoJoueur());
                     if (mdp.equals(dbJoueur.find(realJoueur.getPseudoJoueur()).getMotDePasseJoueur())) {
                         WebSocket.listeJoueurs.add(realJoueur);
-                        response = "Connexion ok";
+                        response = j.getPseudoJoueur();
                     }
                 } catch (Exception e) {
                     response = "Creation joueur failed";
@@ -70,8 +71,39 @@ public class WebSocket {
             }
             
             if (message.contains("\"id\":\"creationPartie\"")) {
-                response = "Creation game failed";
+                response = "Creation game ok";
             }
+            
+            if (message.contains("\"id\":\"Joueurliste\"")) {
+                ArrayList<String> respJ = new ArrayList();
+                WebSocket.listeJoueurs.forEach(coJ -> {
+                    respJ.add(coJ.getPseudoJoueur());
+                });
+                response = respJ.toString();
+            }
+            
+            if (message.contains("\"id\":\"disconnect\"")) {
+                String tamp[] = message.split("\"");                
+                String nom = tamp[tamp.length-2];
+                try {
+                    boolean found = false;
+                    int i = 0;
+                    while (i < WebSocket.listeJoueurs.size() && !found) {
+                        if (WebSocket.listeJoueurs.get(i).getPseudoJoueur().equals(nom)) {
+                            found = !found;
+                        }
+                        i++;
+                    }
+                    
+                    if (found) {
+                        WebSocket.listeJoueurs.remove(i-1);
+                        response = "disconnect ok";
+                    }
+                } catch (Exception e) {
+                    response = "disconnect failed";
+                }
+            }
+            System.out.println(WebSocket.listeJoueurs);
             session.getBasicRemote().sendText(response);
 
         }

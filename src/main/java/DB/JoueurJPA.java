@@ -89,7 +89,6 @@ public class JoueurJPA {
     }
     
     public Joueur find(String pseudo) {
-        System.out.println(pseudo);
         Joueur j = new Joueur();
         try {
             Query q2 = em.createQuery("SELECT j FROM Joueur j WHERE j.pseudoJoueur = \"" + pseudo + "\"", Joueur.class);

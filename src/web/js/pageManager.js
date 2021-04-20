@@ -1,13 +1,35 @@
+let CDCjoueur = null;
+let listDesJoueurs = [];
+
 function loadGame() {
     document.body.innerHTML =
-    ``;
+    `<main>
+    <center>
+        <img src="img/logo.png" alt="logo.png" id="logoGame">
+        <div id="fieldset">
+            <fieldset>
+                <legend>La Chouette</legend>
+                <img src="img/1.png" id="des1" class="fadeIn">
+                <img src="img/1.png" id="des2" class="fadeIn">
+            </fieldset>
+            <fieldset>
+                <legend>Le Cul</legend>
+                <img src="img/1.png" id="des3" class="fadeIn">
+            </fieldset>
+        </div>
+        <input type="button" value="Lancer les dés" id="buttonDes" onClick="rollDices()">
+        <div id="trapeze">
+            <div id="score">0 / 343</div>
+        </div>
+    </center>
+    </main>`;
 }
 
 function loadConnexion() {
     document.body.innerHTML = `
     <main>
         <center>
-            <img src="img/logo.png" alt="logo.png" id="logo">
+            <img src="img/logo.png" alt="logo.png" id="logoConnexion">
             <div id="connexion">
                 <h1>Connexion</h1>
                 <p>Connectez vous à votre compte.</p><br>
@@ -20,7 +42,7 @@ function loadConnexion() {
                     <input type="button" value="Connexion" id="button">
                 </form>
                 <br><br>
-                <a id="creation">Je n'ai pas encore de compte.</a>
+                <a onclick="loadCreation();" id="creation">Je n'ai pas encore de compte.</a>
             </div><br><br>
         </center>
     </main>`;
@@ -31,6 +53,10 @@ function loadConnexion() {
                 loadCreation();
                 break;
 
+            case "Je n'ai pas encore de compte.":
+                loadCreation();
+                break;
+
             case 'Annuler':
                 loadIndex();
                 break;
@@ -38,6 +64,7 @@ function loadConnexion() {
             case 'Connexion':
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
+                CDCjoueur = new Joueur(pseudo);
                 (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp) : '';
                 break;
         }
@@ -48,8 +75,8 @@ function loadCreation() {
     document.body.innerHTML =
     `<main>
     <center>
-        <img src="img/logo.png" alt="logo.png" id="logo">
-        <div id="connexion">
+    <img src="img/logo.png" alt="logo.png" id="logoCreation">
+        <div id="creation">
             <h1>Création de compte</h1>
             <p>Créez vous un compte.</p><br>
             <form method="post">
@@ -103,6 +130,7 @@ function loadCreation() {
                 let mdp = document.getElementById('mdp').value;
                 let ville = document.getElementById('ville').value;
                 let ageJ = document.getElementById('age').value;
+                CDCjoueur = new Joueur(pseudo);
                 (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ) : '';
                 break;
         }
@@ -119,7 +147,7 @@ function loadIndexConnected() {
                     <li>
                         <a id="join_game">Rejoindre une partie</a><br><br>
                         <a id="create_game">Créer une partie</a><br><br>
-                        <a id="regles">Règles du jeu</a><br><br>
+                        <a id="bregles">Règles du jeu</a><br><br>
                     </li>
                 </ul>
             </div>
@@ -132,13 +160,13 @@ function loadIndex() {
     document.body.innerHTML = `
     <main>
         <center>
-            <img src="img/logo.png" alt="logo.png" id="logo">
+            <img src="img/logo.png" alt="logo.png" id="logoAccueil">
             <div id="menu">
                 <ul>
                     <li>
-                        <a id="connexion">Se connecter</a><br><br>
-                        <a id="creation">Créer un compte</a><br><br>
-                        <a id="regles">Règles du jeu</a><br><br>
+                        <a id="bconnexion">Se connecter</a><br><br>
+                        <a id="bcreation">Créer un compte</a><br><br>
+                        <a id="bregles">Règles du jeu</a><br><br>
                     </li>
                 </ul>
             </div>
@@ -149,8 +177,9 @@ function loadIndex() {
 
 function loadRegles() {
     document.body.innerHTML =
-    `<center>
-    <img src="img/logo.png" alt="logo.png" id="logo">
+    `<main>
+    <center>
+    <img src="img/logo.png" alt="logo.png" id="logoRegles">
     <div id="regles">
         <h1>Règles du jeu</h1>
         <fieldset>
@@ -209,14 +238,15 @@ function loadRegles() {
         </fieldset><br><br>
         <a id="back">Retour</a>
     </div>
-    </center>`;
+    </center>
+    </main>`;
 
     document.getElementById('back').addEventListener('click', event => {
         loadIndex();
     });
 }
 
-function getPointsGame(myInter) {
+function getPointsGame() {
     const inputValue = 343;
     const inputStep = 1;
     Swal.fire({
@@ -257,7 +287,7 @@ function getPointsGame(myInter) {
         }
     }).then(function (result) {
         if (result.value) {
-            CDCsocket._creerPartie(result.value, myInter);
+            CDCsocket._creerPartie(result.value);
             Swal.fire({
                 html: '<br><h2 style="font-weight:lighter; font-size:23px;">Le score à atteindre pour cette partie est de ' + result.value + '.</h2><br>',
                 confirmButtonText: 'Valider',
@@ -271,29 +301,52 @@ function loadCreateGame() {
 
     document.body.innerHTML = `<main>
     <center>
-        <img src="img/logo.png" alt="logo.png" id="logo">
-        <div id="menu">
-            <ul>
-                <li>
-                    <h1>Cul de chouette</h1><br>
-                    <h5 id="waiting">En attente de joueur</h5><br>
-                </li>
-            </ul>
+        <div id="liste">
+            <img src="img/logo.png" alt="logo.png" id="logoListe"><br><br>
+            <fieldset>
+                <legend>Joueurs disponibles</legend>
+                <table id="invitations">
+                    <tr>
+                        <td>
+                            Joueurs
+                        </td>
+                        <td>
+                            <button>Inviter</button>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            <fieldset>
+                <legend>Joueurs dans la partie</legend>
+            </fieldset><br><br>
+            <a>Lancer la partie</a><br><br>
+            <a>Retour</a><br><br>
         </div>
     </center>
     </main>`;
 
-    let wait = 'En attente de joueur';
-    let pts = '';
-    var myInter = setInterval(() => {
-        pts += '.';
-        if (pts.length > 3) pts = '';
-        document.getElementById('waiting').innerHTML = `<h5 id="waiting">${wait}${pts}</h5>`;
-    }, 400);
+    // let wait = 'En attente de joueur';
+    // let pts = '';
+    // var myInter = setInterval(() => {
+    //     pts += '.';
+    //     if (pts.length > 3) pts = '';
+    //     document.getElementById('waiting').innerHTML = `<h5 id="waiting">${wait}${pts}</h5>`;
+    // }, 400);
 
-    getPointsGame(myInter);
-
+    getPointsGame();
+    setInterval(() => {
+        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
+    }, 1000);
 }
+
+function collectAll(joueurs) {
+    listDesJoueurs = joueurs;
+    return joueurs;
+}
+
+window.addEventListener('beforeunload', (event) => {
+    CDCsocket._disconnect(CDCjoueur.getPseudo());
+});
 
 let pageManager = document.addEventListener('click', event => {
     switch (event.target.id) {
@@ -305,16 +358,18 @@ let pageManager = document.addEventListener('click', event => {
             loadCreateGame();
             break;
 
-        case 'connexion':
+        case 'bconnexion':
             loadConnexion();
             break;
 
-        case 'creation':
+        case 'bcreation':
             loadCreation();
             break;
 
-        case 'regles':
+        case 'bregles':
             loadRegles();
             break;
     }
 });
+
+
