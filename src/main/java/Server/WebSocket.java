@@ -41,8 +41,8 @@ public class WebSocket {
             WebSocket.listeWS.add(session.getBasicRemote());
         }
         
-       private void itemRequest(javax.websocket.Session session, String request){
-           System.out.println("Seeking this item..." + request);
-       }
+        private void itemRequest(javax.websocket.Session session, String request){
+            System.out.println("Seeking this item..." + request);
+        }
     }
 }
