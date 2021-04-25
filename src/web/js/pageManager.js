@@ -287,7 +287,7 @@ function getPointsGame() {
         }
     }).then(function (result) {
         if (result.value) {
-            CDCsocket._creerPartie(result.value);
+            CDCjoueur != null ? CDCsocket._creerPartie(result.value, CDCjoueur.getPseudo()) : '';
             Swal.fire({
                 html: '<br><h2 style="font-weight:lighter; font-size:23px;">Le score à atteindre pour cette partie est de ' + result.value + '.</h2><br>',
                 confirmButtonText: 'Valider',
@@ -295,6 +295,35 @@ function getPointsGame() {
             });
         }
     });
+}
+
+function loadLobby() {
+    document.body.innerHTML = `<main>
+    <center>
+        <div id="liste">
+            <img src="img/logo.png" alt="logo.png" id="logoListe"><br><br>
+            <fieldset>
+                <legend>Joueurs disponibles</legend>
+                <table id="invitations">
+                </table>
+            </fieldset>
+            <fieldset>
+                <legend>Joueurs dans la partie</legend>
+                <table id="lobbyGame">
+                </table>
+            </fieldset><br><br>
+            <a id="back">Retour</a>
+        </div>
+    </center>
+    </main>`;
+
+    document.getElementById('back').addEventListener('click', event => {
+        loadIndexConnected();
+    });
+
+    setInterval(() => {
+        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
+    }, 1000);
 }
 
 function loadCreateGame() {
@@ -306,26 +335,20 @@ function loadCreateGame() {
             <fieldset>
                 <legend>Joueurs disponibles</legend>
                 <table id="invitations">
-                    <tr>
-                        <td>
-                            Joueurs
-                        </td>
-                        <td>
-                            <button>Inviter</button>
-                        </td>
-                    </tr>
                 </table>
             </fieldset>
             <fieldset>
                 <legend>Joueurs dans la partie</legend>
+                <table id="lobbyGame">
+                </table>
             </fieldset><br><br>
             <a>Lancer la partie</a><br><br>
-            <a>Retour</a><br><br>
+            <a id="back">Retour</a><br><br>
         </div>
     </center>
     </main>`;
 
-    // let wait = 'En attente de joueur';
+    // let wait = 'En attente de joueur'; //CDCjoueur
     // let pts = '';
     // var myInter = setInterval(() => {
     //     pts += '.';
@@ -333,15 +356,14 @@ function loadCreateGame() {
     //     document.getElementById('waiting').innerHTML = `<h5 id="waiting">${wait}${pts}</h5>`;
     // }, 400);
 
+    document.getElementById('back').addEventListener('click', event => {
+        loadIndexConnected();
+    });
+
     getPointsGame();
     setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
-}
-
-function collectAll(joueurs) {
-    listDesJoueurs = joueurs;
-    return joueurs;
 }
 
 window.addEventListener('beforeunload', (event) => {

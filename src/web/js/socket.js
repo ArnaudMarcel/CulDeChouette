@@ -57,10 +57,29 @@ class CDCsocket {
             })
         );
 
-
         this.service.onmessage = (event) => {
             if (event.data != "Connexion failed") {
                 loadIndexConnected();
+                this.service.onmessage = (event) => {
+                    if (event.data.includes('rejoindre:')) {
+                        let don = event.data.split(':');
+                        Swal.fire({
+                            title: `${don[don.length-1]} vous invite à jouer !`,
+                            confirmButtonText: 'Accepter'
+                        }).then(() => {
+                            this.service.send(JSON.stringify({
+                                id: 'rejoindre',
+                                hebergeur: don[don.length-1],
+                                pseudoJoueur: pseudo
+                            }));
+                            this.service.onmessage = (event) => {
+                                event.data.includes('Rejoindre partie') ?
+                                    CDCsocket._lobbyData(event.data) : '';
+                            }
+                            loadLobby();
+                        });
+                    }
+                }
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -71,11 +90,12 @@ class CDCsocket {
         };
     }
 
-    static _creerPartie(pts) {
+    static _creerPartie(pts, pseudo) {
         this.service.send(JSON.stringify({
             id: 'creationPartie',
             heurePartie: new Date().toLocaleString(),
             nbPointsAAtteindrePartie: pts,
+            hebergeur: pseudo
         }));
 
         this.service.onmessage = (event) => {
@@ -94,23 +114,38 @@ class CDCsocket {
     static _getJoueurs(currentPlayer) {
         this.service.send(JSON.stringify({
             id: 'Joueurliste',
+            pseudoJoueur: currentPlayer
         }));
 
         this.service.onmessage = (event) => {
-            let joueurs = event.data.slice(1, event.data.length-1).split(', ');
-            let htmlarray = '';
-            joueurs.forEach(elt => {
-                currentPlayer != elt ?
-                htmlarray += `<tr>
+            let joueurs = JSON.parse(event.data);
+            console.log(joueurs);
+            let JoueursInv = '', JoueursLob = '';
+            joueurs.joueursDisp.forEach(elt => {
+                JoueursInv += `<tr>
                 <td>
                     ${elt}
                 </td>
                 <td>
-                    <button>Inviter</button>
+                    <button name="${elt}" class="inviter">Inviter</button>
                 </td>
-                </tr>` : ``;
+                </tr>`;
             });
-            document.getElementById('invitations').innerHTML = htmlarray;
+
+            joueurs.joueursLobby.forEach(elt => {
+                JoueursLob += `<tr>
+                    <td>
+                        ${elt}
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('invitations').innerHTML = JoueursInv;
+            document.getElementById('lobbyGame').innerHTML = JoueursLob;
+            [].slice.call(document.getElementsByClassName('inviter')).forEach(elt => {
+                elt.addEventListener('click', event => {
+                    CDCsocket._sendInvitation(event.target.name, currentPlayer);
+                });
+            });
         };
     }
 
@@ -121,8 +156,23 @@ class CDCsocket {
         }));
     }
 
-    static _getJoueurs() {
-        
+    static _sendInvitation(pseudo, host) {
+        Swal.fire({
+            icon: 'success',
+            title: `${pseudo} invité !`,
+        });
+
+        this.service.send(JSON.stringify({
+            id: 'invitation',
+            pseudoJoueur: pseudo,
+            hebergeur: host,
+        }));
+
+        this.service.onmessage = (event) => {}
+    }
+
+    static _lobbyData(data) {
+        console.log(data);
     }
 }
 
