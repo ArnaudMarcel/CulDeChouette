@@ -14,6 +14,12 @@ class CDCsocket {
             console.log("service.onclose... " + event.code);
         };
 
+        this.service.onmessage = (event) => {
+            console.log(event.data);
+            let msg = JSON.parse(event.data);
+            CDCsocket[msg.id](msg); // Appel à la fonction correspondant à la demande
+        };
+
         this.service.onerror = () => {
             Swal.fire({
                 icon: 'error',
@@ -33,19 +39,19 @@ class CDCsocket {
                 villeJoueur: ville,
                 ageJoueur: age,
             })
-        );
+        );      
+    }
 
-        this.service.onmessage = (event) => {
-            if (event.data != "Creation failed") {
-                loadIndexConnected();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Ce pseudo est déjà pris !'
-                });
-            }
-        };       
+    static creationJoueur_reussie() {
+        loadIndexConnected();
+    }
+
+    static creationJoueur_echec() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ce pseudo est déjà pris !'
+        });
     }
 
     static _connexionJoueur(pseudo, mdp) {
@@ -56,38 +62,18 @@ class CDCsocket {
                 motDePasseJoueur: mdp,
             })
         );
+    }
 
-        this.service.onmessage = (event) => {
-            if (event.data != "Connexion failed") {
-                loadIndexConnected();
-                this.service.onmessage = (event) => {
-                    if (event.data.includes('rejoindre:')) {
-                        let don = event.data.split(':');
-                        Swal.fire({
-                            title: `${don[don.length-1]} vous invite à jouer !`,
-                            confirmButtonText: 'Accepter'
-                        }).then(() => {
-                            this.service.send(JSON.stringify({
-                                id: 'rejoindre',
-                                hebergeur: don[don.length-1],
-                                pseudoJoueur: pseudo
-                            }));
-                            this.service.onmessage = (event) => {
-                                event.data.includes('Rejoindre partie') ?
-                                    CDCsocket._lobbyData(event.data) : '';
-                            }
-                            loadLobby();
-                        });
-                    }
-                }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Mot de passe incorrect'
-                });
-            }
-        };
+    static connexionJoueur_reussie() {
+        loadIndexConnected();
+    }
+
+    static connexionJoueur_echec(msg) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: `${msg.raison}`
+        });
     }
 
     static _creerPartie(pts, pseudo) {
@@ -97,31 +83,33 @@ class CDCsocket {
             nbPointsAAtteindrePartie: pts,
             hebergeur: pseudo
         }));
+    }
 
-        this.service.onmessage = (event) => {
-            if (event.data === 'Creation game failed') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur survenue...',
-                    confirmButtonText: 'retour',
-                }).then(() => {
-                    loadIndexConnected();
-                });
-            } 
-        };
+    static creationPartie_reussie() {
+
+    }
+
+    static creationPartie_echec() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur survenue...',
+            confirmButtonText: 'retour',
+        }).then(() => {
+            loadIndexConnected();
+        });
     }
 
     static _getJoueurs(currentPlayer) {
+        console.log(currentPlayer);
         this.service.send(JSON.stringify({
             id: 'Joueurliste',
             pseudoJoueur: currentPlayer
         }));
+    }
 
-        this.service.onmessage = (event) => {
-            let joueurs = JSON.parse(event.data);
-            console.log(joueurs);
+    static listeDesJoueurs(msg) {
             let JoueursInv = '', JoueursLob = '';
-            joueurs.joueursDisp.forEach(elt => {
+            msg.joueursDisp.forEach(elt => {
                 JoueursInv += `<tr>
                 <td>
                     ${elt}
@@ -132,21 +120,21 @@ class CDCsocket {
                 </tr>`;
             });
 
-            joueurs.joueursLobby.forEach(elt => {
+            msg.joueursLobby.forEach(elt => {
                 JoueursLob += `<tr>
                     <td>
                         ${elt}
                     </td>
                 </tr>`;
             });
+
             document.getElementById('invitations').innerHTML = JoueursInv;
             document.getElementById('lobbyGame').innerHTML = JoueursLob;
             [].slice.call(document.getElementsByClassName('inviter')).forEach(elt => {
                 elt.addEventListener('click', event => {
-                    CDCsocket._sendInvitation(event.target.name, currentPlayer);
+                    CDCsocket._sendInvitation(event.target.name, CDCjoueur.getPseudo());
                 });
             });
-        };
     }
 
     static _disconnect(pseudo = null) {
@@ -167,12 +155,38 @@ class CDCsocket {
             pseudoJoueur: pseudo,
             hebergeur: host,
         }));
-
-        this.service.onmessage = (event) => {}
     }
 
-    static _lobbyData(data) {
-        console.log(data);
+    static invitationJoueur_reussie() {
+        
+    }
+
+    static invitationPartie(msg) {
+        Swal.fire({
+            title: 'Viens jouer !',
+            text: `${msg.hote} vous a invité`,
+            confirmButtonText: 'Accepter'
+        }).then( (result) => {
+            if (result.value) {
+                console.log("here");
+                this.service.send(JSON.stringify({
+                    id: 'rejoindre',
+                    pseudoJoueur: msg.invite,
+                    hebergeur: msg.hote
+                }));
+            }
+        });
+    }
+
+    static Rejoindre_partie(msg) {
+        loadLobby();
+    }
+
+    static _leaveLobby(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'quitterLobby',
+            pseudoJoueur: pseudo
+        }));
     }
 }
 

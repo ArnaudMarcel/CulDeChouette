@@ -35,7 +35,7 @@ function loadConnexion() {
                 <p>Connectez vous à votre compte.</p><br>
                 <form>
                     <label for="pseudo">Pseudo :</label>
-                    <input id="pseudo" name="psuedo" type="text" required><br><br>
+                    <input id="pseudo" name="pseudo" type="text" required><br><br>
                     <label for="mdp">Mot de passe :</label>
                     <input id="mdp" name="mdp" type="password" required><br><br>
                     <input type="reset" value="Annuler" id="button">
@@ -145,9 +145,9 @@ function loadIndexConnected() {
             <div id="menu">
                 <ul>
                     <li>
-                        <a id="join_game">Rejoindre une partie</a><br><br>
                         <a id="create_game">Créer une partie</a><br><br>
                         <a id="bregles">Règles du jeu</a><br><br>
+                        <a id="deconnection">Déconnection</a><br><br>
                     </li>
                 </ul>
             </div>
@@ -317,13 +317,16 @@ function loadLobby() {
     </center>
     </main>`;
 
-    document.getElementById('back').addEventListener('click', event => {
-        loadIndexConnected();
-    });
-
-    setInterval(() => {
+    let demande = setInterval(() => {
+        console.log("JE DEMANDE");
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
+
+    document.getElementById('back').addEventListener('click', event => {
+        clearInterval(demande)
+        CDCsocket._leaveLobby(CDCjoueur.getPseudo());
+        loadIndexConnected();
+    });
 }
 
 function loadCreateGame() {
@@ -372,8 +375,9 @@ window.addEventListener('beforeunload', (event) => {
 
 let pageManager = document.addEventListener('click', event => {
     switch (event.target.id) {
-        case 'join_game':
-            loadGame();
+        case 'deconnection':
+            CDCsocket._disconnect(CDCjoueur.getPseudo());
+            loadIndex();
             break;
 
         case 'create_game':

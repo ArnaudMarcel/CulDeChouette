@@ -54,4 +54,12 @@ public class PartieManager {
         return pseudo;
     }
     
+    public void delete(Partie p, Joueur j) {
+        ArrayList listJ = this.parties.get(p);
+        System.out.println(j);
+        listJ.remove(j);
+        this.parties.put(p, listJ);
+        System.out.println(this.parties);
+    }
+    
 }

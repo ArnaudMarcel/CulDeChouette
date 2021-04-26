@@ -50,7 +50,9 @@ public class WebSocket {
 
         @javax.websocket.OnOpen
         public void onOpen(javax.websocket.Session session) throws java.io.IOException {
-            session.getBasicRemote().sendText("{Handshaking: \"Yes\"}");
+            HashMap r = new HashMap();
+            r.put("id", "test");
+            session.getBasicRemote().sendText(gson.toJson(r));
         }
     }
 }

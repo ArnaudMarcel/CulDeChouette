@@ -6,6 +6,7 @@
 package Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -210,5 +211,30 @@ public class Joueur implements Serializable {
     public String toString() {
         return "Joueur{" + "idJoueur=" + idJoueur + ", pseudoJoueur=" + pseudoJoueur + ", motDePasseJoueur=" + motDePasseJoueur + ", ageJoueur=" + ageJoueur + ", sexeJoueur=" + sexeJoueur + ", villeJoueur=" + villeJoueur + ", nbParties=" + nbParties + ", nbVictoires=" + nbVictoires + ", nbMoyVictoires=" + nbMoyVictoires + ", scoreMoyen=" + scoreMoyen + ", moySuitesGagnees=" + moySuitesGagnees + ", moyChouettesVelutesPerdues=" + moyChouettesVelutesPerdues + '}';
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.idJoueur);
+        hash = 37 * hash + Objects.hashCode(this.pseudoJoueur);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Joueur other = (Joueur) obj;
+        return Objects.equals(this.pseudoJoueur, other.pseudoJoueur);
+    }
+    
+    
 }
 

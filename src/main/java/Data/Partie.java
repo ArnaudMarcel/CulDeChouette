@@ -6,6 +6,7 @@
 package Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -60,6 +61,39 @@ public class Partie implements Serializable {
 
     public void setNbPointsAAtteindrePartie(int nbPointsAAtteindrePartie) {
         this.nbPointsAAtteindrePartie = nbPointsAAtteindrePartie;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.idPartie);
+        hash = 59 * hash + Objects.hashCode(this.heurePartie);
+        hash = 59 * hash + this.nbPointsAAtteindrePartie;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Partie other = (Partie) obj;
+        if (this.nbPointsAAtteindrePartie != other.nbPointsAAtteindrePartie) {
+            return false;
+        }
+        if (!Objects.equals(this.heurePartie, other.heurePartie)) {
+            return false;
+        }
+        if (!Objects.equals(this.idPartie, other.idPartie)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

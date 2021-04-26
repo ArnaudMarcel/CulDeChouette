@@ -18,12 +18,12 @@ import java.util.HashMap;
 
 /**
  *
- * @author darra
+ * @author Arnaud
  */
 public class UserControler {
 
     private String id;
-    private String response;
+    private HashMap response = new HashMap();
     private GsonBuilder builder = new GsonBuilder();
     private Gson gson = builder.create();
 
@@ -33,12 +33,7 @@ public class UserControler {
 
     public UserControler() {
     }
-
-    public UserControler(String id, String response) {
-        this.id = id;
-        this.response = response;
-    }
-
+    
     public String getId() {
         return id;
     }
@@ -47,19 +42,17 @@ public class UserControler {
         this.id = id;
     }
 
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
-    public void creationJoueur(String message, javax.websocket.Session session) throws SpeudoAlreadyExistException {
+    public void creationJoueur(String message, javax.websocket.Session session) throws IOException {
         JoueurJPA dbJoueur = new JoueurJPA();
         Joueur j = this.gson.fromJson(message, Joueur.class);
-        dbJoueur.create(j);
-        WebSocket.listeJoueurs.put(j.getPseudoJoueur(), session);
+        try {
+            dbJoueur.create(j);
+            WebSocket.listeJoueurs.put(j.getPseudoJoueur(), session);
+            this.response.put("id", "creationJoueur_reussie");
+        } catch (SpeudoAlreadyExistException e) {
+            this.response.put("id", "creationJoueur_echec");
+        }
+        session.getBasicRemote().sendText(gson.toJson(this.response)); //pb
     }
 
     public void connexion(String message, javax.websocket.Session session) throws IOException {
@@ -70,14 +63,23 @@ public class UserControler {
             String mdp = tamp[tamp.length - 2];
             Joueur realJoueur = dbJoueur.find(j.getPseudoJoueur());
             if (mdp.equals(dbJoueur.find(realJoueur.getPseudoJoueur()).getMotDePasseJoueur())) {
-                WebSocket.listeJoueurs.put(realJoueur.getPseudoJoueur(), session);
-                this.response = j.getPseudoJoueur();
+                if ((!WebSocket.listeJoueurs.containsKey(realJoueur.getPseudoJoueur()))) {
+                    WebSocket.listeJoueurs.put(realJoueur.getPseudoJoueur(), session);
+                    this.response.put("id", "connexionJoueur_reussie");
+                    this.response.put("pseudoJoueur", j.getPseudoJoueur());
+                } else {
+                    this.response.put("id", "connexionJoueur_echec");
+                    this.response.put("raison", "Joueur déjà connecté");
+                }
+                
+            } else {
+                this.response.put("id", "connexionJoueur_echec");                
+                this.response.put("raison", "Mot de passe incorrect");
             }
         } catch (Exception e) {
-            this.response = "Connexion joueur failed";
+            this.response.put("id", "connexionJoueur_echec");
         }
-
-        session.getBasicRemote().sendText(this.response);
+        session.getBasicRemote().sendText(gson.toJson(this.response));
     }
 
     public void creationPartie(String message, javax.websocket.Session session) throws IOException {
@@ -88,10 +90,12 @@ public class UserControler {
             Partie p = gson.fromJson(message, Partie.class);
             WebSocket.listeParties.put(hote, p);
             WebSocket.pm.add(p, dbJoueur.find(hote));
+            this.response.put("id", "creationPartie_reussie");
         } catch (JsonSyntaxException e) {
             System.out.println("erreur survenue : " + e.getMessage());
-            session.getBasicRemote().sendText("Creation de partie erreur");
+            this.response.put("id", "creationPartie_echec");
         }
+        session.getBasicRemote().sendText(gson.toJson(this.response));
     }
 
     public void Joueurliste(String message, javax.websocket.Session session) throws IOException {
@@ -103,20 +107,24 @@ public class UserControler {
                 respJ.add(pseudo);
         });
         
-        HashMap<String, ArrayList> r = new HashMap();
+        HashMap r = new HashMap();
+        r.put("id", "listeDesJoueurs");
         r.put("joueursDisp", respJ);        
         r.put("joueursLobby", JoueursLobby);
-        System.out.println("ETAT PARTIE : " + r);
         session.getBasicRemote().sendText(gson.toJson(r));
     }
     
     public void disconnect(String message, javax.websocket.Session session) throws IOException, IOException, IOException {
-        String tamp[] = message.split("\"");
-        String nom = tamp[tamp.length - 2];
+        Joueur j = gson.fromJson(message, Joueur.class);
         try {
-            WebSocket.listeJoueurs.remove(nom);
+            WebSocket.listeJoueurs.remove(j.getPseudoJoueur());
+            Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+            if (p != null) {
+                WebSocket.pm.delete(p, j);
+            }
         } catch (Exception e) {
-            session.getBasicRemote().sendText("disconnect failed");
+            System.out.println("erreur survenue : " + e.getMessage());
+            session.getBasicRemote().sendText("disconnect_failed");
         }
     }
     
@@ -126,13 +134,13 @@ public class UserControler {
             message = message.replace("pseudoJoueur", "old");
             message = message.replace("hebergeur", "pseudoJoueur");
             String hostJ = gson.fromJson(message, Joueur.class).getPseudoJoueur();
-            WebSocket.listeJoueurs.get(invJ).getBasicRemote().sendText("rejoindre:" + hostJ);
-            this.response = "invitation ok";
+            this.response.put("id", "invitationPartie"); 
+            this.response.put("hote", hostJ);
+            this.response.put("invite", invJ);
+            WebSocket.listeJoueurs.get(invJ).getBasicRemote().sendText(gson.toJson(this.response));
         } catch (JsonSyntaxException e) {
             System.out.println(e.getMessage());
-            this.response = "invitation failed";
         }
-        session.getBasicRemote().sendText(this.response);
     }
     
     public void rejoindre(String message, javax.websocket.Session session) throws IOException {
@@ -145,9 +153,15 @@ public class UserControler {
         WebSocket.listeParties.put(invJ, p);
         Joueur invite = dbJoueur.find(invJ);
         WebSocket.pm.add(p, invite);
-        session.getBasicRemote().sendText("{"
-                + "id: Rejoindre partie,"
-                + "joueurs: " + WebSocket.pm.getPseudoJoueurs(p).toString() + "}");
+        this.response.put("id", "Rejoindre_partie");
+        session.getBasicRemote().sendText(gson.toJson(this.response));
     }
-
+    
+    public void quitterLobby(String message, javax.websocket.Session session) {
+        JoueurJPA dbJoueur = new JoueurJPA();
+        Joueur j = dbJoueur.find(gson.fromJson(message, Joueur.class).getPseudoJoueur());
+        Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+        WebSocket.pm.delete(p, j);
+        WebSocket.listeParties.remove(j.getPseudoJoueur());
+    }
 }
