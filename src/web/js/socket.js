@@ -188,6 +188,22 @@ class CDCsocket {
             pseudoJoueur: pseudo
         }));
     }
+
+    static PartieSupprimee() {
+        clearInterval(InterID);
+        loadIndexConnected();
+        Swal.fire({
+            icon: 'error',
+            title: 'Partie dissoute'
+        });
+    }
+
+    static _quitterLobby(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'quitterLobby',
+            pseudoJoueur: pseudo
+        }));
+    }
 }
 
 CDCsocket._connect();

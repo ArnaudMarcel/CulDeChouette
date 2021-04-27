@@ -1,5 +1,6 @@
 let CDCjoueur = null;
 let listDesJoueurs = [];
+let InterID;
 
 function loadGame() {
     document.body.innerHTML =
@@ -317,13 +318,12 @@ function loadLobby() {
     </center>
     </main>`;
 
-    let demande = setInterval(() => {
-        console.log("JE DEMANDE");
+    InterID = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
 
     document.getElementById('back').addEventListener('click', event => {
-        clearInterval(demande)
+        clearInterval(InterID)
         CDCsocket._leaveLobby(CDCjoueur.getPseudo());
         loadIndexConnected();
     });
@@ -360,7 +360,7 @@ function loadCreateGame() {
     // }, 400);
 
     document.getElementById('back').addEventListener('click', event => {
-        loadIndexConnected();
+        CDCsocket._quitterLobby(CDCjoueur.getPseudo());
     });
 
     getPointsGame();

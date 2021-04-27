@@ -15,6 +15,8 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,7 +35,7 @@ public class UserControler {
 
     public UserControler() {
     }
-    
+
     public String getId() {
         return id;
     }
@@ -63,7 +65,7 @@ public class UserControler {
             String mdp = tamp[tamp.length - 2];
             Joueur realJoueur = dbJoueur.find(j.getPseudoJoueur());
             if (mdp.equals(dbJoueur.find(realJoueur.getPseudoJoueur()).getMotDePasseJoueur())) {
-                if ((!WebSocket.listeJoueurs.containsKey(realJoueur.getPseudoJoueur()))) {
+                if (!WebSocket.listeJoueurs.containsKey(realJoueur.getPseudoJoueur())) {
                     WebSocket.listeJoueurs.put(realJoueur.getPseudoJoueur(), session);
                     this.response.put("id", "connexionJoueur_reussie");
                     this.response.put("pseudoJoueur", j.getPseudoJoueur());
@@ -71,9 +73,9 @@ public class UserControler {
                     this.response.put("id", "connexionJoueur_echec");
                     this.response.put("raison", "Joueur déjà connecté");
                 }
-                
+
             } else {
-                this.response.put("id", "connexionJoueur_echec");                
+                this.response.put("id", "connexionJoueur_echec");
                 this.response.put("raison", "Mot de passe incorrect");
             }
         } catch (Exception e) {
@@ -103,38 +105,50 @@ public class UserControler {
         ArrayList<String> respJ = new ArrayList();
         ArrayList<String> JoueursLobby = WebSocket.pm.getPseudoJoueurs(WebSocket.listeParties.get(j.getPseudoJoueur()));
         WebSocket.listeJoueurs.forEach((pseudo, s) -> {
-            if (!JoueursLobby.contains(pseudo))
+            if (!JoueursLobby.contains(pseudo)) {
                 respJ.add(pseudo);
+            }
         });
-        
+
         HashMap r = new HashMap();
         r.put("id", "listeDesJoueurs");
-        r.put("joueursDisp", respJ);        
+        r.put("joueursDisp", respJ);
         r.put("joueursLobby", JoueursLobby);
         session.getBasicRemote().sendText(gson.toJson(r));
     }
-    
+
     public void disconnect(String message, javax.websocket.Session session) throws IOException, IOException, IOException {
         Joueur j = gson.fromJson(message, Joueur.class);
         try {
-            WebSocket.listeJoueurs.remove(j.getPseudoJoueur());
             Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
             if (p != null) {
-                WebSocket.pm.delete(p, j);
+                if (WebSocket.pm.getHotePartie(p).getPseudoJoueur().equals(j.getPseudoJoueur())) {
+                    this.response.put("id", "PartieSupprimee");
+                    WebSocket.pm.getJoueurs(p).forEach((Joueur joueurP) -> {
+                        try {
+                            WebSocket.listeParties.remove(joueurP.getPseudoJoueur());
+                            WebSocket.listeJoueurs.get(joueurP.getPseudoJoueur()).getBasicRemote().sendText(gson.toJson(this.response));
+                        } catch (IOException ex) {
+                            Logger.getLogger(UserControler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                    WebSocket.pm.delete(p);
+                }
             }
         } catch (Exception e) {
             System.out.println("erreur survenue : " + e.getMessage());
             session.getBasicRemote().sendText("disconnect_failed");
         }
+        WebSocket.listeJoueurs.remove(j.getPseudoJoueur());
     }
-    
+
     public void invitation(String message, javax.websocket.Session session) throws IOException {
         try {
             String invJ = gson.fromJson(message, Joueur.class).getPseudoJoueur();
             message = message.replace("pseudoJoueur", "old");
             message = message.replace("hebergeur", "pseudoJoueur");
             String hostJ = gson.fromJson(message, Joueur.class).getPseudoJoueur();
-            this.response.put("id", "invitationPartie"); 
+            this.response.put("id", "invitationPartie");
             this.response.put("hote", hostJ);
             this.response.put("invite", invJ);
             WebSocket.listeJoueurs.get(invJ).getBasicRemote().sendText(gson.toJson(this.response));
@@ -142,7 +156,7 @@ public class UserControler {
             System.out.println(e.getMessage());
         }
     }
-    
+
     public void rejoindre(String message, javax.websocket.Session session) throws IOException {
         JoueurJPA dbJoueur = new JoueurJPA();
         String invJ = gson.fromJson(message, Joueur.class).getPseudoJoueur();
@@ -156,12 +170,30 @@ public class UserControler {
         this.response.put("id", "Rejoindre_partie");
         session.getBasicRemote().sendText(gson.toJson(this.response));
     }
-    
-    public void quitterLobby(String message, javax.websocket.Session session) {
+
+    public void quitterLobby(String message, javax.websocket.Session session) throws IOException {
         JoueurJPA dbJoueur = new JoueurJPA();
         Joueur j = dbJoueur.find(gson.fromJson(message, Joueur.class).getPseudoJoueur());
-        Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
-        WebSocket.pm.delete(p, j);
+        try {
+            Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+            if (WebSocket.pm.getHotePartie(p).getPseudoJoueur().equals(j.getPseudoJoueur())) {
+                this.response.put("id", "PartieSupprimee");
+                WebSocket.pm.getJoueurs(p).forEach((Joueur joueurP) -> {
+                    try {
+                        WebSocket.listeParties.remove(joueurP.getPseudoJoueur());
+                        WebSocket.listeJoueurs.get(joueurP.getPseudoJoueur()).getBasicRemote().sendText(gson.toJson(this.response));
+                    } catch (IOException ex) {
+                        Logger.getLogger(UserControler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+                WebSocket.pm.delete(p);
+            } else {
+                WebSocket.pm.delete(p, j);
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur survenue (quitterLobby) :" + e.getMessage());
+        }
+
         WebSocket.listeParties.remove(j.getPseudoJoueur());
     }
 }

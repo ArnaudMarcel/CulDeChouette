@@ -62,4 +62,11 @@ public class PartieManager {
         System.out.println(this.parties);
     }
     
+    public void delete(Partie p) {
+        this.parties.remove(p);
+    }
+    
+    public Joueur getHotePartie(Partie p) {
+        return this.parties.get(p).get(0);
+    }
 }
