@@ -8,7 +8,7 @@ function sleep(time) {
 
 function loadGame(pts, listeDesJoueurs) {
     document.body.innerHTML =
-        `<main>
+    `<main>
     <center>
         <img src="img/logo.png" alt="logo.png" id="logoGame">
         <div id="fieldset">
@@ -82,6 +82,7 @@ function montrerDesLanceur(lancer) {
         // }else if( msg == "ChouetteVelute"){
         //     document.getElementById("CVButton").style.display = "inline";
         // }
+
     }
 }
 
@@ -119,13 +120,14 @@ function loadConnexion() {
 
             case 'Annuler':
                 loadIndex();
-                break;
 
             case 'Connexion':
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
                 CDCjoueur = new Joueur(pseudo);
                 (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp): '';
+                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp) : '';
+
                 break;
         }
     });
@@ -169,12 +171,10 @@ function loadCreation() {
                     document.getElementById('Homme').checked = true;
                     document.getElementById('Femme').checked = false;
                     break;
-
                 case 'Femme':
                     document.getElementById('Femme').checked = true;
                     document.getElementById('Homme').checked = false;
                     break;
-
             }
         });
     });
@@ -184,7 +184,6 @@ function loadCreation() {
             case 'Annuler':
                 loadIndex();
                 break;
-
             case 'Valider':
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
@@ -192,6 +191,7 @@ function loadCreation() {
                 let ageJ = document.getElementById('age').value;
                 CDCjoueur = new Joueur(pseudo);
                 (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ): '';
+                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ) : '';
                 break;
         }
     });
@@ -237,7 +237,7 @@ function loadIndex() {
 
 function loadRegles() {
     document.body.innerHTML =
-        `<main>
+    `<main>
     <center>
     <img src="img/logo.png" alt="logo.png" id="logoRegles">
     <div id="regles">
@@ -379,6 +379,7 @@ function loadLobby() {
 
     demande = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());
+        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
 
     document.getElementById('back').addEventListener('click', event => {
@@ -428,6 +429,10 @@ function loadCreateGame() {
     }, 1000);
 
     document.getElementById('start').addEventListener('click', event => {
+        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
+    }, 1000);
+
+    document.getElementById('start').addEventListener('click', event =>{
         CDCsocket._lancerPartie(CDCjoueur.getPseudo());
     });
 }
@@ -459,4 +464,5 @@ let pageManager = document.addEventListener('click', event => {
             loadRegles();
             break;
     }
+});
 });

@@ -13,6 +13,13 @@ class CDCsocket {
 
         this.service.onclose = (event) => {
             console.log("Fermeture du service. Code : " + event.code);
+        
+        this.service.onopen = () => {
+            this.service.send(JSON.stringify({id: "handShacking"}));
+        };
+
+        this.service.onclose = (event) => {
+            console.log("service.onclose... " + event.code);
         };
 
         this.service.onmessage = (event) => {
@@ -26,6 +33,8 @@ class CDCsocket {
                 icon: 'error',
                 html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur de connexion</h2><br><p>Connexion avec le serveur perdue</p>',
                 confirmButtonColor: 'rgb(0, 151, 0)'
+                title: 'Oops...',
+                text: 'Connexion avec le serveur perdue'
             });
         };
     }
@@ -39,6 +48,16 @@ class CDCsocket {
             villeJoueur: ville,
             ageJoueur: age,
         }));
+        this.service.send(JSON.stringify(
+            {
+                id: "creationJoueur",
+                pseudoJoueur: pseudo,
+                motDePasseJoueur: mdp,
+                sexeJoueur: sexe,
+                villeJoueur: ville,
+                ageJoueur: age,
+            })
+        );      
     }
 
     static creationJoueur_reussie() {
@@ -50,6 +69,8 @@ class CDCsocket {
             icon: 'error',
             html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur</h2><br><p>Le pseudo est déjà utilisé</p>',
             confirmButtonColor: 'rgb(0, 151, 0)'
+            title: 'Oops...',
+            text: 'Ce pseudo est déjà pris !'
         });
     }
 
@@ -59,6 +80,13 @@ class CDCsocket {
             pseudoJoueur: pseudo,
             motDePasseJoueur: mdp,
         }));
+        this.service.send(JSON.stringify(
+            {
+                id: "connexion",
+                pseudoJoueur: pseudo,
+                motDePasseJoueur: mdp,
+            })
+        );
     }
 
     static connexionJoueur_reussie() {
@@ -69,6 +97,7 @@ class CDCsocket {
         Swal.fire({
             icon: 'error',
             title: 'Erreur de connexion',
+            title: 'Oops...',
             text: `${msg.raison}`
         });
     }
@@ -92,6 +121,8 @@ class CDCsocket {
             html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur</h2><br><p>Une erreur est survenue lors de la création de la partie</p>',
             confirmButtonColor: 'rgb(0, 151, 0)',
             confirmButtonText: 'Retour',
+            title: 'Erreur survenue...',
+            confirmButtonText: 'retour',
         }).then(() => {
             loadIndexConnected();
         });
@@ -110,6 +141,9 @@ class CDCsocket {
             JoueursLob = '';
         msg.joueursDisp.forEach(elt => {
             JoueursInv += `<tr>
+            let JoueursInv = '', JoueursLob = '';
+            msg.joueursDisp.forEach(elt => {
+                JoueursInv += `<tr>
                 <td>
                     ${elt}
                 </td>
@@ -121,6 +155,10 @@ class CDCsocket {
 
         msg.joueursLobby.forEach(elt => {
             JoueursLob += `<tr>
+            });
+
+            msg.joueursLobby.forEach(elt => {
+                JoueursLob += `<tr>
                     <td>
                         ${elt}
                     </td>
@@ -134,6 +172,15 @@ class CDCsocket {
                 CDCsocket._sendInvitation(event.target.name, CDCjoueur.getPseudo());
             });
         });
+            });
+
+            document.getElementById('invitations').innerHTML = JoueursInv;
+            document.getElementById('lobbyGame').innerHTML = JoueursLob;
+            [].slice.call(document.getElementsByClassName('inviter')).forEach(elt => {
+                elt.addEventListener('click', event => {
+                    CDCsocket._sendInvitation(event.target.name, CDCjoueur.getPseudo());
+                });
+            });
     }
 
     static _disconnect(pseudo = null) {
@@ -148,6 +195,7 @@ class CDCsocket {
             icon: 'success',
             html: `<h2 style="font-weight:lighter; font-size:23px;">Joueur invité !</h2><br><p>Le joueur ${pseudo} à été invité au groupe de votre partie</p>`,
             confirmButtonColor: 'rgb(0, 151, 0)'
+            title: `${pseudo} invité !`,
         });
 
         this.service.send(JSON.stringify({
@@ -158,7 +206,6 @@ class CDCsocket {
     }
 
     static invitationJoueur_reussie() {
-
     }
 
     static invitationPartie(msg) {
@@ -169,6 +216,12 @@ class CDCsocket {
             showDenyButton: true,
             denyButtonText: 'Refuser'
         }).then((result) => {
+            title: 'Viens jouer !',
+            text: `${msg.hote} vous a invité`,
+            confirmButtonText: 'Accepter',
+            showDenyButton: true,
+            denyButtonText: 'Refuser'
+        }).then( (result) => {
             if (result.value) {
                 console.log("here");
                 this.service.send(JSON.stringify({
@@ -198,6 +251,7 @@ class CDCsocket {
             icon: 'info',
             html: '<h2 style="font-weight:lighter; font-size:23px;">Partie dissoute</h2><br><p>Le groupe de la partie a été dissout</p>',
             confirmButtonColor: 'rgb(0, 151, 0)'
+            title: 'Partie dissoute'
         });
     }
 
@@ -230,6 +284,7 @@ class CDCsocket {
             icon: 'info',
             html: '<h2 style="font-weight:lighter; font-size:23px;">À vous de jouer !</h2><br><p>C\'est à votre tour de lancer les dès</p>',
             confirmButtonColor: 'rgb(0, 151, 0)'
+            title: "c'est votre tour !"
         });
 
         tourJoueur();
