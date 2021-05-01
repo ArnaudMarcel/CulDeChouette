@@ -1,8 +1,12 @@
 let CDCjoueur = null;
 let listDesJoueurs = [];
-let InterID;
+let demande;
 
-function loadGame() {
+function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+function loadGame(pts, listeDesJoueurs) {
     document.body.innerHTML =
     `<main>
     <center>
@@ -18,12 +22,61 @@ function loadGame() {
                 <img src="img/1.png" id="des3" class="fadeIn">
             </fieldset>
         </div>
-        <input type="button" value="Lancer les dés" id="buttonDes" onClick="rollDices()">
+        <div id="lancer"></div>
+        ${listeDesJoueurs}
         <div id="trapeze">
-            <div id="score">0 / 343</div>
+            <div id="score">0 / ${pts}</div>
         </div>
     </center>
     </main>`;
+
+
+}
+
+function tourJoueur() {
+    document.getElementById('lancer').innerHTML = `<input type="button" value="Lancer les dés" id="buttonDes">`;
+    document.getElementById('buttonDes').addEventListener('click', event => {
+        CDCsocket._lancerDes(CDCjoueur.getPseudo());
+        event.target.remove();
+    });
+}
+
+function montrerDes(lancer) {
+    document.getElementById("des1").src = "img/" + lancer.valeurDes1 + ".png";
+    document.getElementById("des2").src = "img/" + lancer.valeurDes2 + ".png";
+    document.getElementById("des3").src = "img/" + lancer.valeurDes3 + ".png";
+    // document.getElementById("buttonDes").style.display = "none";
+    document.getElementById("des1").className = "fadeIn load";
+    sleep(500).then(() => {
+        document.getElementById("des2").className = "fadeIn load";
+        sleep(500).then(() => {
+            document.getElementById("des3").className = "fadeIn load";
+        });
+    });
+}
+
+function montrerDesLanceur(lancer) {
+    document.getElementById("des1").src = "img/" + lancer.valeurDes1 + ".png";
+    document.getElementById("des2").src = "img/" + lancer.valeurDes2 + ".png";
+    document.getElementById("des3").src = "img/" + lancer.valeurDes3 + ".png";
+    // document.getElementById("buttonDes").style.display = "none";
+    document.getElementById("des1").className = "fadeIn load";
+    sleep(500).then(() => {
+        document.getElementById("des2").className = "fadeIn load";
+        sleep(500).then(() => {
+            document.getElementById("des3").className = "fadeIn load";
+        });
+    });
+
+    if (!lancer.interaction) {
+        console.log("sleep");
+        sleep(5000).then(() => {
+            console.log("go");
+            CDCsocket._joueurSuivant(CDCjoueur.getPseudo());
+        });
+    } else {
+
+    }
 }
 
 function loadConnexion() {
@@ -318,12 +371,12 @@ function loadLobby() {
     </center>
     </main>`;
 
-    InterID = setInterval(() => {
+    demande = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
 
     document.getElementById('back').addEventListener('click', event => {
-        clearInterval(InterID)
+        clearInterval(demande)
         CDCsocket._leaveLobby(CDCjoueur.getPseudo());
         loadIndexConnected();
     });
@@ -345,7 +398,7 @@ function loadCreateGame() {
                 <table id="lobbyGame">
                 </table>
             </fieldset><br><br>
-            <a>Lancer la partie</a><br><br>
+            <a id="start">Lancer la partie</a><br><br>
             <a id="back">Retour</a><br><br>
         </div>
     </center>
@@ -364,9 +417,13 @@ function loadCreateGame() {
     });
 
     getPointsGame();
-    setInterval(() => {
+    demande = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
+
+    document.getElementById('start').addEventListener('click', event =>{
+        CDCsocket._lancerPartie(CDCjoueur.getPseudo());
+    });
 }
 
 window.addEventListener('beforeunload', (event) => {

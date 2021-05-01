@@ -66,7 +66,7 @@ public class Partie implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.idPartie);
+        //hash = 59 * hash + Objects.hashCode(this.idPartie);
         hash = 59 * hash + Objects.hashCode(this.heurePartie);
         hash = 59 * hash + this.nbPointsAAtteindrePartie;
         return hash;

@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.lang.reflect.Method;
+import Data.PartieControler;
 
 /**
  *
@@ -23,6 +24,7 @@ public class WebSocket {
     static HashMap<String, javax.websocket.Session> listeJoueurs = new HashMap<>();    
     static HashMap<String, Partie> listeParties = new HashMap<>();
     static PartieManager pm = new PartieManager();
+    static HashMap<Partie, PartieControler> pc = new HashMap<>();
 
     @javax.websocket.server.ServerEndpoint(value = "/WebSocket")
     

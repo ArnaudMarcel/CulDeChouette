@@ -165,7 +165,9 @@ class CDCsocket {
         Swal.fire({
             title: 'Viens jouer !',
             text: `${msg.hote} vous a invité`,
-            confirmButtonText: 'Accepter'
+            confirmButtonText: 'Accepter',
+            showDenyButton: true,
+            denyButtonText: 'Refuser'
         }).then( (result) => {
             if (result.value) {
                 console.log("here");
@@ -193,7 +195,7 @@ class CDCsocket {
         clearInterval(InterID);
         loadIndexConnected();
         Swal.fire({
-            icon: 'error',
+            icon: 'info',
             title: 'Partie dissoute'
         });
     }
@@ -201,6 +203,55 @@ class CDCsocket {
     static _quitterLobby(pseudo) {
         this.service.send(JSON.stringify({
             id: 'quitterLobby',
+            pseudoJoueur: pseudo
+        }));
+    }
+
+    static _lancerPartie(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'lancerPartie',
+            pseudoJoueur: pseudo
+        }));
+    }
+
+    static culDeChouette(msg) {
+        clearInterval(demande);
+        let joueurs = `<table><tr>`;
+        msg.listeJoueurs.forEach(elt => {
+            joueurs += `<td>${elt}</td>`;
+        });
+        joueurs += `</tr></table>`;
+        loadGame(msg.points, joueurs);
+    }
+
+    static tour() {
+        Swal.fire({
+            icon: 'info',
+            title: "c'est votre tour !"
+        });
+
+        tourJoueur();
+    }
+
+    static _lancerDes(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'lancerDes',
+            pseudoJoueur: pseudo,
+        }));
+    }
+
+    static resultatDesLanceur(msg) {
+        console.log(msg);
+        montrerDesLanceur(msg.lancer);
+    }
+
+    static resultatDes(msg) {
+        montrerDes(msg.lancer);
+    }
+
+    static _joueurSuivant(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'joueurSuivant',
             pseudoJoueur: pseudo
         }));
     }

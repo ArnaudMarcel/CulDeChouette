@@ -8,13 +8,12 @@ package Data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 /**
  *
  * @author darra
  */
 public class PartieManager {
-    private Map<Partie, ArrayList<Joueur>> parties;
+    private HashMap<Partie, ArrayList<Joueur>> parties;
     
     public PartieManager() {
         this.parties = new HashMap<>();
@@ -48,6 +47,7 @@ public class PartieManager {
     
     public ArrayList getPseudoJoueurs(Partie p) {
         ArrayList pseudo = new ArrayList();
+        System.out.println(this.parties.containsKey(p));
         this.parties.get(p).forEach(j -> {
             pseudo.add(j.getPseudoJoueur());
         });
@@ -56,7 +56,6 @@ public class PartieManager {
     
     public void delete(Partie p, Joueur j) {
         ArrayList listJ = this.parties.get(p);
-        System.out.println(j);
         listJ.remove(j);
         this.parties.put(p, listJ);
         System.out.println(this.parties);

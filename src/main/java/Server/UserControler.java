@@ -10,7 +10,9 @@ import com.google.gson.GsonBuilder;
 import DB.JoueurJPA;
 import DB.SpeudoAlreadyExistException;
 import Data.Joueur;
+import Data.Lancer;
 import Data.Partie;
+import Data.PartieControler;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -195,5 +197,60 @@ public class UserControler {
         }
 
         WebSocket.listeParties.remove(j.getPseudoJoueur());
+    }
+
+    public void lancerPartie(String message, javax.websocket.Session session) throws IOException {
+        Joueur j = gson.fromJson(message, Joueur.class);
+        Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+        ArrayList<String> jPartie = WebSocket.pm.getPseudoJoueurs(p);
+        this.response.put("id", "culDeChouette");
+        this.response.put("listeJoueurs", jPartie);
+        this.response.put("points", p.getNbPointsAAtteindrePartie());
+        PartieControler tamp = new PartieControler(p, WebSocket.pm.getJoueurs(p));
+        WebSocket.pc.put(p, tamp);
+        jPartie.forEach((String jp) -> {
+            try {
+                WebSocket.listeJoueurs.get(jp).getBasicRemote()
+                        .sendText(gson.toJson(this.response));
+            } catch (IOException ex) {
+                Logger.getLogger(UserControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        WebSocket.pc.get(p).start();
+    }
+
+    public void tourJoueur(Joueur j) throws IOException {
+        this.response.put("id", "tour");
+        WebSocket.listeJoueurs.get(j.getPseudoJoueur()).getBasicRemote().sendText(
+                gson.toJson(this.response));
+    }
+
+    public void lancerDes(String message, javax.websocket.Session session) {
+        JoueurJPA jp = new JoueurJPA();
+        Joueur j = jp.find(gson.fromJson(message, Joueur.class).getPseudoJoueur());
+        Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+        Lancer l = WebSocket.pc.get(p).lancer(j);
+        this.response.put("id", "resultatDes");
+        this.response.put("lancer", l);
+        WebSocket.pm.getPseudoJoueurs(p).forEach(pseudo -> {
+
+            if (pseudo.equals(j.getPseudoJoueur())) {
+                this.response.put("id", "resultatDesLanceur");
+            } else {
+                this.response.put("id", "resultatDes");
+            }
+            try {
+                WebSocket.listeJoueurs.get(pseudo).getBasicRemote().sendText(
+                        gson.toJson(this.response));
+            } catch (IOException ex) {
+                Logger.getLogger(UserControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
+    
+    public void joueurSuivant(String message, javax.websocket.Session session) throws IOException {
+        Joueur j = gson.fromJson(message, Joueur.class);
+        Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+        WebSocket.pc.get(p).tourSuivant();
     }
 }

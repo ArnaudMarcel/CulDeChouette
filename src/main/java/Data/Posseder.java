@@ -29,7 +29,7 @@ public class Posseder implements Serializable {
     @Column(name="nbChouettesVelutesGagnees")
     int nbChouettesVelutesGagnees;
     @Column(name="estGagnant")
-    boolean estGagnant; 
+    boolean estGagnant = false; 
 
     public Posseder(Long idJoueur, Long idPartie, int nbPoints, int nbSuitesGagnees, int nbChouettesVelutesGagnees, boolean estGagnant) {
         this.idJoueur = idJoueur;

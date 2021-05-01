@@ -6,14 +6,12 @@
 package Data;
 
 import java.io.Serializable;
+import java.util.Random;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-
-
 
 /**
  *
@@ -21,21 +19,22 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class Lancer implements Serializable {
-    @Column(name="IdLancer")
+
+    @Column(name = "IdLancer")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long idLancer;
-    @Column(name="valeurDes1")
+    @Column(name = "valeurDes1")
     int valeurDes1;
-    @Column(name="valeurDes2")
+    @Column(name = "valeurDes2")
     int valeurDes2;
-    @Column(name="valeurDes3")
+    @Column(name = "valeurDes3")
     int valeurDes3;
-    @Column(name="interaction")
+    @Column(name = "interaction")
     boolean interaction;
-    @Column(name="idJoueur")
+    @Column(name = "idJoueur")
     long idJoueur;
-    @Column(name="idPartie")
+    @Column(name = "idPartie")
     long idPartie;
 
     public Lancer(long idLancer, int valeurDes1, int valeurDes2, int valeurDes3, boolean interaction, long idJoueur, long idPartie) {
@@ -57,9 +56,61 @@ public class Lancer implements Serializable {
         this.idPartie = idPartie;
     }
 
-    public Lancer() {
+    public Lancer(long idJoueur, long idPartie) {
+        this.idPartie = idPartie;
+        this.idJoueur = idJoueur;
+        Random rand = new Random();
+        this.valeurDes1 = rand.nextInt(6) + 1;
+        this.valeurDes2 = rand.nextInt(6) + 1;
+        this.valeurDes3 = rand.nextInt(6) + 1;
+        this.isInteraction();
     }
 
+    public Lancer() {
+
+    }
+
+    private void isInteraction() {
+        if (this.valeurDes1 + 1 == this.valeurDes2 && this.valeurDes1 + 2 == this.valeurDes3) {
+            this.interaction = true;
+        }
+        if (this.valeurDes1 + this.valeurDes2 == this.valeurDes3 && this.valeurDes1 == this.valeurDes2) {
+            this.interaction = true;
+        }
+    }
+    
+    public boolean isVelute() {
+        return (this.valeurDes1 + this.valeurDes2 == this.valeurDes3 && this.valeurDes1 != this.valeurDes2);
+    }
+    
+    public boolean isChouette() {
+        return (this.valeurDes1 == this.valeurDes2 && this.valeurDes1 * 2 != this.valeurDes3);
+    }
+    
+    public boolean isCulDeChouette() {
+        return (this.valeurDes1 == this.valeurDes2 && this.valeurDes2 == this.valeurDes3);
+    }
+
+    public boolean isSuite() {
+        return (this.valeurDes1 + 1 == this.valeurDes2 && this.valeurDes1 + 2 == this.valeurDes3);
+    }
+    
+    public boolean isChouetteVelute() {
+        return (this.isChouette() && this.isVelute());
+    }
+    
+    public String getNomInteraction() {
+        String nom = null;
+        if (this.interaction == true) {
+            if (this.isChouetteVelute()) {
+                nom = "ChouetteVelute";
+            } else {
+                nom = "Suite";
+            }
+        }
+        return nom;
+    }
+    
     public long getIdLancer() {
         return idLancer;
     }
@@ -121,5 +172,4 @@ public class Lancer implements Serializable {
         return "Lancer{" + "idLancer=" + idLancer + ", valeurDes1=" + valeurDes1 + ", valeurDes2=" + valeurDes2 + ", valeurDes3=" + valeurDes3 + ", interaction=" + interaction + ", idJoueur=" + idJoueur + ", idPartie=" + idPartie + '}';
     }
 
-    
 }
