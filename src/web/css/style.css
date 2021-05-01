@@ -21,6 +21,9 @@ main {
     color: white;
 }
 
+a{
+    cursor: pointer;
+}
 /* ------------------------------ Accueil ------------------------------ */
 
 #logoAccueil {
@@ -368,6 +371,35 @@ legend {
     font-size: 1.8em;
     margin-top: 10px;
 }
+
+#suiteButton, #CVButton{
+    margin: 25px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px;
+    font-size: 17px;
+    border-color: white;
+    border-style: solid white 1px;
+    background-color: transparent;
+    color: white;
+    position: absolute;
+    right: 10%;
+    bottom: 5%;
+    display: none;
+}
+
+#suiteButton:hover, #CVButton:hover {
+    cursor: pointer;
+    color: #303030;
+    background-color: white;
+}
+
+#suiteButton:focus, #CVButton:focus {
+    outline: none;
+}
+
+/* ------------------------------ Animations ------------------------------ */
 
 .fadeIn {
     opacity: 0;
