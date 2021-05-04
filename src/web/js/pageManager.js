@@ -27,6 +27,8 @@ function loadGame(pts, listeDesJoueurs) {
         <div id="trapeze">
             <div id="score">0 / ${pts}</div>
         </div>
+        <button id="suiteButton">Grelotte ça picotte !</button>
+        <button id="CVButton">Pas mou le caillou !</button>
     </center>
     </main>`;
 
@@ -166,13 +168,13 @@ function loadConnexion() {
 
             case 'Annuler':
                 loadIndex();
-                break;
-            
+
             case 'Connexion':
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
                 CDCjoueur = new Joueur(pseudo);
-                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp) : '';
+                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp): '';
+
                 break;
         }
     });
@@ -180,7 +182,7 @@ function loadConnexion() {
 
 function loadCreation() {
     document.body.innerHTML =
-    `<main>
+        `<main>
     <center>
     <img src="img/logo.png" alt="logo.png" id="logoCreation">
         <div id="creation">
@@ -216,12 +218,10 @@ function loadCreation() {
                     document.getElementById('Homme').checked = true;
                     document.getElementById('Femme').checked = false;
                     break;
-    
                 case 'Femme':
                     document.getElementById('Femme').checked = true;
                     document.getElementById('Homme').checked = false;
                     break;
-                    
             }
         });
     });
@@ -231,14 +231,13 @@ function loadCreation() {
             case 'Annuler':
                 loadIndex();
                 break;
-            
             case 'Valider':
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
                 let ville = document.getElementById('ville').value;
                 let ageJ = document.getElementById('age').value;
                 CDCjoueur = new Joueur(pseudo);
-                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ) : '';
+                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ): '';
                 break;
         }
     });
@@ -471,12 +470,12 @@ function loadCreateGame() {
 
     getPointsGame();
     demande = setInterval(() => {
-        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
+        CDCsocket._getJoueurs(CDCjoueur.getPseudo());
     }, 1000);
 
-    document.getElementById('start').addEventListener('click', event =>{
-        CDCsocket._lancerPartie(CDCjoueur.getPseudo());
-    });
+    document.getElementById('start').addEventListener('click', event => {
+        CDCsocket._lancerPartie(CDCjoueur.getPseudo());      
+    }, 1000);
 }
 
 window.addEventListener('beforeunload', (event) => {
@@ -507,5 +506,3 @@ let pageManager = document.addEventListener('click', event => {
             break;
     }
 });
-
-

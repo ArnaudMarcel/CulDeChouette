@@ -1,10 +1,19 @@
-
 class CDCsocket {
 
     service = null;
 
     static _connect() {
         this.service = new WebSocket("ws://localhost:8080/culDeChouette/WebSocket");
+
+        this.service.onopen = () => {
+            this.service.send(JSON.stringify({
+                id: "handShacking"
+            }));
+        };
+
+        this.service.onclose = (event) => {
+            console.log("Fermeture du service. Code : " + event.code);
+        };
         
         this.service.onopen = () => {
             this.service.send(JSON.stringify({id: "handShacking"}));
@@ -23,6 +32,8 @@ class CDCsocket {
         this.service.onerror = () => {
             Swal.fire({
                 icon: 'error',
+                html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur de connexion</h2><br><p>Connexion avec le serveur perdue</p>',
+                confirmButtonColor: 'rgb(0, 151, 0)',
                 title: 'Oops...',
                 text: 'Connexion avec le serveur perdue'
             });
@@ -30,6 +41,14 @@ class CDCsocket {
     }
 
     static _sendCreation(pseudo, mdp, sexe, ville, age) {
+        this.service.send(JSON.stringify({
+            id: "creationJoueur",
+            pseudoJoueur: pseudo,
+            motDePasseJoueur: mdp,
+            sexeJoueur: sexe,
+            villeJoueur: ville,
+            ageJoueur: age,
+        }));
         this.service.send(JSON.stringify(
             {
                 id: "creationJoueur",
@@ -49,19 +68,19 @@ class CDCsocket {
     static creationJoueur_echec() {
         Swal.fire({
             icon: 'error',
+            html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur</h2><br><p>Le pseudo est déjà utilisé</p>',
+            confirmButtonColor: 'rgb(0, 151, 0)',
             title: 'Oops...',
             text: 'Ce pseudo est déjà pris !'
         });
     }
 
     static _connexionJoueur(pseudo, mdp) {
-        this.service.send(JSON.stringify(
-            {
-                id: "connexion",
-                pseudoJoueur: pseudo,
-                motDePasseJoueur: mdp,
-            })
-        );
+        this.service.send(JSON.stringify({
+            id: "connexion",
+            pseudoJoueur: pseudo,
+            motDePasseJoueur: mdp,
+        }));
     }
 
     static connexionJoueur_reussie() {
@@ -71,6 +90,7 @@ class CDCsocket {
     static connexionJoueur_echec(msg) {
         Swal.fire({
             icon: 'error',
+            title: 'Erreur de connexion',
             title: 'Oops...',
             text: `${msg.raison}`
         });
@@ -92,6 +112,9 @@ class CDCsocket {
     static creationPartie_echec() {
         Swal.fire({
             icon: 'error',
+            html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur</h2><br><p>Une erreur est survenue lors de la création de la partie</p>',
+            confirmButtonColor: 'rgb(0, 151, 0)',
+            confirmButtonText: 'Retour',
             title: 'Erreur survenue...',
             confirmButtonText: 'retour',
         }).then(() => {
@@ -108,9 +131,10 @@ class CDCsocket {
     }
 
     static listeDesJoueurs(msg) {
-            let JoueursInv = '', JoueursLob = '';
-            msg.joueursDisp.forEach(elt => {
-                JoueursInv += `<tr>
+        let JoueursInv = '',
+            JoueursLob = '';
+        msg.joueursDisp.forEach(elt => {
+            JoueursInv += `<tr>
                 <td>
                     ${elt}
                 </td>
@@ -118,7 +142,7 @@ class CDCsocket {
                     <button name="${elt}" class="inviter">Inviter</button>
                 </td>
                 </tr>`;
-            });
+        });
 
             msg.joueursLobby.forEach(elt => {
                 JoueursLob += `<tr>
@@ -126,15 +150,15 @@ class CDCsocket {
                         ${elt}
                     </td>
                 </tr>`;
-            });
+        });
 
-            document.getElementById('invitations').innerHTML = JoueursInv;
-            document.getElementById('lobbyGame').innerHTML = JoueursLob;
-            [].slice.call(document.getElementsByClassName('inviter')).forEach(elt => {
-                elt.addEventListener('click', event => {
-                    CDCsocket._sendInvitation(event.target.name, CDCjoueur.getPseudo());
-                });
+        document.getElementById('invitations').innerHTML = JoueursInv;
+        document.getElementById('lobbyGame').innerHTML = JoueursLob;
+        [].slice.call(document.getElementsByClassName('inviter')).forEach(elt => {
+            elt.addEventListener('click', event => {
+                CDCsocket._sendInvitation(event.target.name, CDCjoueur.getPseudo());
             });
+        });
     }
 
     static _disconnect(pseudo = null) {
@@ -147,6 +171,8 @@ class CDCsocket {
     static _sendInvitation(pseudo, host) {
         Swal.fire({
             icon: 'success',
+            html: `<h2 style="font-weight:lighter; font-size:23px;">Joueur invité !</h2><br><p>Le joueur ${pseudo} à été invité au groupe de votre partie</p>`,
+            confirmButtonColor: 'rgb(0, 151, 0)',
             title: `${pseudo} invité !`,
         });
 
@@ -158,14 +184,13 @@ class CDCsocket {
     }
 
     static invitationJoueur_reussie() {
-        
     }
 
     static invitationPartie(msg) {
         Swal.fire({
-            title: 'Viens jouer !',
-            text: `${msg.hote} vous a invité`,
+            html: `<h2 style="font-weight:lighter; font-size:23px;">Le joueur ${msg.hote} vous a invité à jouer !</h2><br><p>Voulez vous rejoindre sa partie ?</p>`,
             confirmButtonText: 'Accepter',
+            confirmButtonColor: 'rgb(0, 151, 0)',
             showDenyButton: true,
             denyButtonText: 'Refuser'
         }).then( (result) => {
@@ -196,6 +221,8 @@ class CDCsocket {
         loadIndexConnected();
         Swal.fire({
             icon: 'info',
+            html: '<h2 style="font-weight:lighter; font-size:23px;">Partie dissoute</h2><br><p>Le groupe de la partie a été dissout</p>',
+            confirmButtonColor: 'rgb(0, 151, 0)',
             title: 'Partie dissoute'
         });
     }
@@ -227,7 +254,8 @@ class CDCsocket {
     static tour() {
         Swal.fire({
             icon: 'info',
-            title: "c'est votre tour !"
+            html: '<h2 style="font-weight:lighter; font-size:23px;">À vous de jouer !</h2><br><p>C\'est à votre tour de lancer les dès</p>',
+            confirmButtonColor: 'rgb(0, 151, 0)',
         });
 
         tourJoueur();
