@@ -268,7 +268,7 @@ function loadIndexConnected() {
     document.body.innerHTML = `
     <main>
         <center>
-            <img src="img/logo.png" alt="logo.png" id="logo">
+            <img src="img/logo.png" alt="logo.png" id="logoAccueil">
             <div id="menu">
                 <ul>
                     <li>
