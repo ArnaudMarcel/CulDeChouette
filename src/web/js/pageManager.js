@@ -79,6 +79,13 @@ function montrerDes(msg) {
             sleep(800).then(() => {
                 UpdateScore(msg.score);
                 UpdateBottomScore(msg.score);
+                msg.combinaison != "none" ? Swal.fire({
+                    icon: 'info',
+                    title: `Oh ${msg.combinaison} !`,
+                    showConfirmButton: false,
+                    timer: 1500
+                }) : '';
+
                 msg.lancer.interaction ? Swal.fire({
                     title: `${msg.action}`,
                     confirmButtonText: `${msg.reponse}`,
@@ -90,19 +97,12 @@ function montrerDes(msg) {
                         CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
                     }
                 }) : '';
-
-                msg.combinaison != "none" ? Swal.fire({
-                    icon: 'info',
-                    title: `Oh ${msg.combinaison} !`,
-                    showConfirmButton: false,
-                    timer: 1500
-                }) : '';
             });
         });
     });
 
     if (!msg.lancer.interaction) {
-        sleep(5000).then(() => {
+        sleep(4000).then(() => {
             document.getElementById("des1").className = "fadeIn";
             document.getElementById("des2").className = "fadeIn";
             document.getElementById("des3").className = "fadeIn";
@@ -123,6 +123,13 @@ function montrerDesLanceur(msg) {
             sleep(800).then(() => {
                 UpdateScore(msg.score);
                 UpdateBottomScore(msg.score);
+                msg.combinaison != "none" ? Swal.fire({
+                    icon: 'info',
+                    title: `Oh ${msg.combinaison} !`,
+                    showConfirmButton: false,
+                    timer: 1500
+                }) : '';
+
                 msg.lancer.interaction ? Swal.fire({
                     title: `${msg.action}`,
                     confirmButtonText: `${msg.reponse}`,
@@ -134,19 +141,12 @@ function montrerDesLanceur(msg) {
                         CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
                     }
                 }) : '';
-
-                msg.combinaison != "none" ? Swal.fire({
-                    icon: 'info',
-                    title: `Oh ${msg.combinaison} !`,
-                    showConfirmButton: false,
-                    timer: 1500
-                }) : '';
             });
         });
     });
 
     if (!msg.lancer.interaction) {
-        sleep(5000).then(() => {
+        sleep(4000).then(() => {
             document.getElementById("des1").className = "fadeIn";
             document.getElementById("des2").className = "fadeIn";
             document.getElementById("des3").className = "fadeIn";
