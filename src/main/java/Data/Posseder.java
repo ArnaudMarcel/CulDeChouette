@@ -42,6 +42,10 @@ public class Posseder implements Serializable {
 
     public Posseder() {
     }
+    
+    public void addPoints(int pts) {
+        this.nbPoints += pts;
+    }
 
     public Long getIdJoueur() {
         return idJoueur;

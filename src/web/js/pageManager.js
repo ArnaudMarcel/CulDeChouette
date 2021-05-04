@@ -12,6 +12,7 @@ function loadGame(pts, listeDesJoueurs) {
     <center>
         <img src="img/logo.png" alt="logo.png" id="logoGame">
         <div id="fieldset">
+        <table id="ScorePartie"></table>
             <fieldset>
                 <legend>La Chouette</legend>
                 <img src="img/1.png" id="des1" class="fadeIn">
@@ -23,14 +24,19 @@ function loadGame(pts, listeDesJoueurs) {
             </fieldset>
         </div>
         <div id="lancer"></div>
-        ${listeDesJoueurs}
         <div id="trapeze">
             <div id="score">0 / ${pts}</div>
         </div>
     </center>
     </main>`;
 
-
+    tableHTML = '';
+    listeDesJoueurs.forEach(j => {
+        tableHTML += `<tr>
+            <td>${j}</td>
+            <td>0</td>
+        </tr>`;
+    });
 }
 
 function tourJoueur() {
@@ -41,42 +47,89 @@ function tourJoueur() {
     });
 }
 
-function montrerDes(lancer) {
-    document.getElementById("des1").src = "img/" + lancer.valeurDes1 + ".png";
-    document.getElementById("des2").src = "img/" + lancer.valeurDes2 + ".png";
-    document.getElementById("des3").src = "img/" + lancer.valeurDes3 + ".png";
-    // document.getElementById("buttonDes").style.display = "none";
-    document.getElementById("des1").className = "fadeIn load";
-    sleep(500).then(() => {
-        document.getElementById("des2").className = "fadeIn load";
-        sleep(500).then(() => {
-            document.getElementById("des3").className = "fadeIn load";
-        });
+function UpdateScore(score) {
+    tableHTML = '';
+    score.forEach(elt => {
+        tableHTML += `<tr>
+            <td>${elt[0]}</td>
+            <td>${elt[1]}</td>
+        </tr>`;
     });
+    document.getElementById('ScorePartie').innerHTML = tableHTML;
 }
 
-function montrerDesLanceur(lancer) {
-    document.getElementById("des1").src = "img/" + lancer.valeurDes1 + ".png";
-    document.getElementById("des2").src = "img/" + lancer.valeurDes2 + ".png";
-    document.getElementById("des3").src = "img/" + lancer.valeurDes3 + ".png";
+function montrerDes(msg) {
+    document.getElementById("des1").src = "img/" + msg.lancer.valeurDes1 + ".png";
+    document.getElementById("des2").src = "img/" + msg.lancer.valeurDes2 + ".png";
+    document.getElementById("des3").src = "img/" + msg.lancer.valeurDes3 + ".png";
     // document.getElementById("buttonDes").style.display = "none";
     document.getElementById("des1").className = "fadeIn load";
     sleep(500).then(() => {
         document.getElementById("des2").className = "fadeIn load";
         sleep(500).then(() => {
             document.getElementById("des3").className = "fadeIn load";
+            sleep(800).then(() => {
+                msg.lancer.interaction ? Swal.fire({
+                    title: `${msg.action}`,
+                    confirmButtonText: `${msg.reponse}`,
+                }).then((result) => {
+                    if (result.value) {
+                        document.getElementById("des1").className = "fadeIn";
+                        document.getElementById("des2").className = "fadeIn";
+                        document.getElementById("des3").className = "fadeIn";
+                        CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
+                    }
+                }) : '';
+            });
         });
     });
 
-    if (!lancer.interaction) {
-        console.log("sleep");
+    UpdateScore(msg.score);
+
+    if (!msg.lancer.interaction) {
         sleep(5000).then(() => {
-            console.log("go");
+            document.getElementById("des1").className = "fadeIn";
+            document.getElementById("des2").className = "fadeIn";
+            document.getElementById("des3").className = "fadeIn";
+        });
+    } 
+}
+
+function montrerDesLanceur(msg) {
+    document.getElementById("des1").src = "img/" + msg.lancer.valeurDes1 + ".png";
+    document.getElementById("des2").src = "img/" + msg.lancer.valeurDes2 + ".png";
+    document.getElementById("des3").src = "img/" + msg.lancer.valeurDes3 + ".png";
+    // document.getElementById("buttonDes").style.display = "none";
+    document.getElementById("des1").className = "fadeIn load";
+    sleep(500).then(() => {
+        document.getElementById("des2").className = "fadeIn load";
+        sleep(500).then(() => {
+            document.getElementById("des3").className = "fadeIn load";
+            sleep(800).then(() => {
+                msg.lancer.interaction ? Swal.fire({
+                    title: `${msg.action}`,
+                    confirmButtonText: `${msg.reponse}`,
+                }).then((result) => {
+                    if (result.value) {
+                        document.getElementById("des1").className = "fadeIn";
+                        document.getElementById("des2").className = "fadeIn";
+                        document.getElementById("des3").className = "fadeIn";
+                        CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
+                    }
+                }) : '';
+            });
+        });
+    });
+    UpdateScore(msg.score);
+
+    if (!msg.lancer.interaction) {
+        sleep(5000).then(() => {
+            document.getElementById("des1").className = "fadeIn";
+            document.getElementById("des2").className = "fadeIn";
+            document.getElementById("des3").className = "fadeIn";
             CDCsocket._joueurSuivant(CDCjoueur.getPseudo());
         });
-    } else {
-
-    }
+    } 
 }
 
 function loadConnexion() {

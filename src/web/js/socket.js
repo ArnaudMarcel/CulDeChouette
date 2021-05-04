@@ -241,12 +241,11 @@ class CDCsocket {
     }
 
     static resultatDesLanceur(msg) {
-        console.log(msg);
-        montrerDesLanceur(msg.lancer);
+        montrerDesLanceur(msg);
     }
 
     static resultatDes(msg) {
-        montrerDes(msg.lancer);
+        montrerDes(msg);
     }
 
     static _joueurSuivant(pseudo) {
@@ -254,6 +253,25 @@ class CDCsocket {
             id: 'joueurSuivant',
             pseudoJoueur: pseudo
         }));
+    }
+
+    static _actionJoueur(pseudo, action, reponse, valeurDes3) {
+        this.service.send(JSON.stringify({
+            id: 'actionJoueur',
+            pseudoJoueur: pseudo,
+            nom: action,
+            reponse: reponse,
+            valeurCul: valeurDes3
+        }));
+    }
+
+    static PartieTerminee(msg) {
+        Swal.fire({
+            title: 'Partie Terminée',
+            text: `Le seul, le grand, l'unique gagnant est ${msg.gagnant}`
+        }).then(() => {
+            loadIndexConnected();
+        });
     }
 }
 

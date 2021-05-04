@@ -5,8 +5,10 @@
  */
 package Data;
 
+import DB.JoueurJPA;
 import DB.LancerJPA;
 import DB.PartieJPA;
+import DB.PossederJPA;
 import Server.UserControler;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,18 +26,22 @@ public class PartieControler {
     private HashMap<Joueur, Posseder> points = new HashMap();
     private UserControler uc;
     private int index;
+    private boolean action = false;
+    private HashMap<Joueur, Boolean> suite = new HashMap();
 
     public PartieControler(Partie p, ArrayList<Joueur> joueurs) {
         Random rand = new Random();
         this.p = p;
         this.joueurs = joueurs;
         this.joueurs.forEach(j -> {
-            Posseder poss = new Posseder();
-            this.points.put(j, poss);
+            this.points.put(j, new Posseder());
         });
         this.uc = new UserControler();
         this.index = 0;
         PartieJPA pj = new PartieJPA();
+        this.joueurs.forEach((Joueur j) -> {
+            this.suite.put(j, false);
+        });
         p.setIdPartie(Long.valueOf(rand.nextInt(9999999)));
         pj.create(p);
     }
@@ -47,7 +53,7 @@ public class PartieControler {
     private boolean unGagnant() {
         boolean fini = false;
         for (Joueur j : this.joueurs) {
-            if (this.points.get(j).getNbPoints() >= this.p.nbPointsAAtteindrePartie) {
+            if (this.points.get(j).getNbPoints() >= this.p.getNbPointsAAtteindrePartie()) {
                 this.points.get(j).setEstGagnant(true);
                 fini = true;
                 break;
@@ -55,10 +61,17 @@ public class PartieControler {
         }
         return fini;
     }
-    
+
     public void tourSuivant() throws IOException {
-        this.joueurSuivant();
-        this.tour(this.joueurs.get(this.index));
+        this.action = false;
+        if (!this.unGagnant()) {
+            this.joueurSuivant();
+            this.tour(this.joueurs.get(this.index));
+        } else {
+            this.saugarderPartie();
+            this.uc.partieTerminee(this.gagnant(), this.joueurs, this.p);
+        }
+
     }
 
     private void tour(Joueur j) throws IOException {
@@ -71,37 +84,120 @@ public class PartieControler {
         if (j.equals(this.joueurs.get(this.index))) {
             l = new Lancer(j.getIdJoueur(), p.getIdPartie());
             this.addPoints(j, l);
+
+            if (l.getInteraction()) {
+                this.action = true;
+            }
         }
+
         lj.create(l);
         return l;
     }
 
     private void addPoints(Joueur j, Lancer l) {
-        this.points.get(j).setNbPoints(this.nbPoints(l));
+        Posseder pts = this.points.get(j);
+        pts.addPoints(this.nbPoints(l));
     }
-    
+
     private int nbPoints(Lancer l) {
         int a = 0;
         if (l.isChouetteVelute()) {
             a = 40 + 10 * l.getValeurDes1();
         } else {
             if (l.isCulDeChouette()) {
-                a = 40 + 10 * l.getValeurDes1();              
+                a = 40 + 10 * l.getValeurDes1();
             } else {
                 if (l.isChouette()) {
                     a = l.getValeurDes1() * l.getValeurDes2();
                 } else {
                     if (l.isVelute()) {
-                        a = (l.getValeurDes1() + l.getValeurDes2()) * (l.getValeurDes1() + l.getValeurDes2());
+                        a = (l.getValeurDes3()) * (l.getValeurDes3());
                     }
                 }
             }
         }
         return a;
     }
-    
+
     private void joueurSuivant() {
         this.index++;
-        if (this.index == this.joueurs.size()) this.index = 0;
+        if (this.index == this.joueurs.size()) {
+            this.index = 0;
+        }
+    }
+
+    public void interactionJoueur(Action a) throws IOException {
+        System.out.println(a.getNom());
+        switch (a.getNom()) {
+            case "Suite":
+                this.suite(a);
+                break;
+
+            case "ChouetteVelute":
+                this.ChouetteVelute(a);
+                break;
+        }
+    }
+
+    private void suite(Action a) throws IOException {
+        JoueurJPA jp = new JoueurJPA();
+        if (this.action) {
+            Joueur j = jp.find(a.getPseudoJoueur());
+            this.suite.put(j, true);
+            if (this.estDernier()) {
+                Posseder pts = this.points.get(j);
+                pts.addPoints(-10);
+                this.points.put(j, pts);
+                this.joueurs.forEach((Joueur jTamp) -> {
+                    this.suite.put(jTamp, false);
+                });
+                this.tourSuivant();
+            }
+        }
+    }
+
+    private void ChouetteVelute(Action a) throws IOException {
+        JoueurJPA jp = new JoueurJPA();
+        if (this.action) {
+            this.action = false;
+            Joueur j = jp.find(a.getPseudoJoueur());
+            Posseder pts = this.points.get(j);
+            pts.addPoints(a.getValeurCul() * a.getValeurCul());
+            this.tourSuivant();
+        }
+    }
+
+    private boolean estDernier() {
+        return !(this.suite.values().contains(false));
+    }
+
+    private void saugarderPartie() {
+        System.out.println("SAVE");
+        this.joueurs.forEach((Joueur j) -> {
+            PossederJPA pj = new PossederJPA();
+            Posseder p1 = PartieControler.this.points.get(j);
+            p1.setIdJoueur(j.getIdJoueur());
+            p1.setIdPartie(PartieControler.this.p.getIdPartie());
+            pj.create(p1);
+        });
+    }
+
+    private Joueur gagnant() {
+        Joueur gagnant = null;
+        for (Joueur j : this.joueurs) {
+            gagnant = this.points.get(j).isEstGagnant() ? j : null;
+        }
+        return gagnant;
+    }
+
+    public ArrayList getPoints() {
+        ArrayList pts = new ArrayList();
+        this.joueurs.forEach((Joueur j) -> {
+            ArrayList tamp = new ArrayList();
+            tamp.add(j.getPseudoJoueur());
+            tamp.add(this.points.get(j).getNbPoints());
+            pts.add(tamp);
+        });
+        return pts;
     }
 }
