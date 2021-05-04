@@ -24,7 +24,6 @@ class CDCsocket {
         };
 
         this.service.onmessage = (event) => {
-            console.log(event.data);
             let msg = JSON.parse(event.data);
             CDCsocket[msg.id](msg); // Appel à la fonction correspondant à la demande
         };
@@ -123,7 +122,6 @@ class CDCsocket {
     }
 
     static _getJoueurs(currentPlayer) {
-        console.log(currentPlayer);
         this.service.send(JSON.stringify({
             id: 'Joueurliste',
             pseudoJoueur: currentPlayer
@@ -172,8 +170,9 @@ class CDCsocket {
         Swal.fire({
             icon: 'success',
             html: `<h2 style="font-weight:lighter; font-size:23px;">Joueur invité !</h2><br><p>Le joueur ${pseudo} à été invité au groupe de votre partie</p>`,
-            confirmButtonColor: 'rgb(0, 151, 0)',
             title: `${pseudo} invité !`,
+            showConfirmButton: false,
+            timer: 1500
         });
 
         this.service.send(JSON.stringify({
@@ -195,7 +194,6 @@ class CDCsocket {
             denyButtonText: 'Refuser'
         }).then( (result) => {
             if (result.value) {
-                console.log("here");
                 this.service.send(JSON.stringify({
                     id: 'rejoindre',
                     pseudoJoueur: msg.invite,
@@ -256,6 +254,8 @@ class CDCsocket {
             icon: 'info',
             html: '<h2 style="font-weight:lighter; font-size:23px;">À vous de jouer !</h2><br><p>C\'est à votre tour de lancer les dès</p>',
             confirmButtonColor: 'rgb(0, 151, 0)',
+            showConfirmButton: false,
+            timer: 1000
         });
 
         tourJoueur();

@@ -235,6 +235,7 @@ public class UserControler {
         this.response.put("lancer", l);
         this.response.put("action", l.getNomInteraction());
         this.response.put("reponse", l.getReponseInteraction());
+        this.response.put("combinaison", l.getCombinaisonName());
         this.response.put("score", WebSocket.pc.get(p).getPoints());
         WebSocket.pm.getPseudoJoueurs(p).forEach(pseudo -> {
             if (pseudo.equals(j.getPseudoJoueur())) {

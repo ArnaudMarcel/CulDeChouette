@@ -84,7 +84,7 @@ public class Lancer implements Serializable {
     }
 
     public boolean isChouette() {
-        return (this.valeurDes1 == this.valeurDes2 && this.valeurDes1 * 2 != this.valeurDes3);
+        return (this.valeurDes1 == this.valeurDes2);
     }
 
     public boolean isCulDeChouette() {
@@ -126,6 +126,20 @@ public class Lancer implements Serializable {
                 default:
                     break;
             }
+        }
+        return s;
+    }
+    
+    public String getCombinaisonName() {
+        String s = "none";
+        if (this.isVelute() && !this.isChouette()) {
+            s = "Velutte";
+        }
+        if (!this.isVelute() && this.isChouette()) {
+            s = "Chouette";
+        }
+        if (this.isCulDeChouette()) {
+            s = "Cul De Chouette";
         }
         return s;
     }

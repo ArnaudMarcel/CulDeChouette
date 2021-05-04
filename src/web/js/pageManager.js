@@ -60,6 +60,12 @@ function UpdateScore(score) {
     document.getElementById('ScorePartie').innerHTML = tableHTML;
 }
 
+function UpdateBottomScore(score) {
+    let bottomS = document.getElementById('score');
+    let s = score.find(elt => elt[0] === CDCjoueur.getPseudo())[1];
+    bottomS.innerText = s + ' / ' + bottomS.innerText.split(' / ').pop();
+}
+
 function montrerDes(msg) {
     document.getElementById("des1").src = "img/" + msg.lancer.valeurDes1 + ".png";
     document.getElementById("des2").src = "img/" + msg.lancer.valeurDes2 + ".png";
@@ -71,6 +77,8 @@ function montrerDes(msg) {
         sleep(500).then(() => {
             document.getElementById("des3").className = "fadeIn load";
             sleep(800).then(() => {
+                UpdateScore(msg.score);
+                UpdateBottomScore(msg.score);
                 msg.lancer.interaction ? Swal.fire({
                     title: `${msg.action}`,
                     confirmButtonText: `${msg.reponse}`,
@@ -82,11 +90,16 @@ function montrerDes(msg) {
                         CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
                     }
                 }) : '';
+
+                msg.combinaison != "none" ? Swal.fire({
+                    icon: 'info',
+                    title: `Oh ${msg.combinaison} !`,
+                    showConfirmButton: false,
+                    timer: 1500
+                }) : '';
             });
         });
     });
-
-    UpdateScore(msg.score);
 
     if (!msg.lancer.interaction) {
         sleep(5000).then(() => {
@@ -108,6 +121,8 @@ function montrerDesLanceur(msg) {
         sleep(500).then(() => {
             document.getElementById("des3").className = "fadeIn load";
             sleep(800).then(() => {
+                UpdateScore(msg.score);
+                UpdateBottomScore(msg.score);
                 msg.lancer.interaction ? Swal.fire({
                     title: `${msg.action}`,
                     confirmButtonText: `${msg.reponse}`,
@@ -119,10 +134,16 @@ function montrerDesLanceur(msg) {
                         CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
                     }
                 }) : '';
+
+                msg.combinaison != "none" ? Swal.fire({
+                    icon: 'info',
+                    title: `Oh ${msg.combinaison} !`,
+                    showConfirmButton: false,
+                    timer: 1500
+                }) : '';
             });
         });
     });
-    UpdateScore(msg.score);
 
     if (!msg.lancer.interaction) {
         sleep(5000).then(() => {

@@ -127,7 +127,6 @@ public class PartieControler {
     }
 
     public void interactionJoueur(Action a) throws IOException {
-        System.out.println(a.getNom());
         switch (a.getNom()) {
             case "Suite":
                 this.suite(a);
@@ -172,7 +171,6 @@ public class PartieControler {
     }
 
     private void saugarderPartie() {
-        System.out.println("SAVE");
         this.joueurs.forEach((Joueur j) -> {
             PossederJPA pj = new PossederJPA();
             Posseder p1 = PartieControler.this.points.get(j);
