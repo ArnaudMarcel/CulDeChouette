@@ -33,10 +33,12 @@ class CDCsocket {
                 icon: 'error',
                 html: '<h2 style="font-weight:lighter; font-size:23px;">Erreur de connexion</h2><br><p>Connexion avec le serveur perdue</p>',
                 confirmButtonColor: 'rgb(0, 151, 0)',
-                title: 'Oops...',
-                text: 'Connexion avec le serveur perdue'
             });
         };
+    }
+
+    static hello() {
+        console.log("connected");
     }
 
     static _sendCreation(pseudo, mdp, sexe, ville, age) {
