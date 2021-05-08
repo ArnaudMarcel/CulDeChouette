@@ -41,8 +41,7 @@ public class JoueurJPA {
     public void update(Joueur j) {
         this.em.getTransaction().begin();
         Query q = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + j.getIdJoueur(), Joueur.class);
-        Joueur p = new Joueur();
-        p = (Joueur) q.getSingleResult();
+        Joueur p = (Joueur) q.getSingleResult();
         p.setAgeJoueur(j.getAgeJoueur());
         p.setMotDePasseJoueur(j.getMotDePasseJoueur());
         p.setMoyChouettesVelutesPerdues(j.getMoyChouettesVelutesPerdues());

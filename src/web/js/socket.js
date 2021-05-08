@@ -217,7 +217,7 @@ class CDCsocket {
     }
 
     static PartieSupprimee() {
-        clearInterval(InterID);
+        clearInterval(demande);
         loadIndexConnected();
         Swal.fire({
             icon: 'info',
@@ -235,6 +235,7 @@ class CDCsocket {
     }
 
     static _lancerPartie(pseudo) {
+        
         this.service.send(JSON.stringify({
             id: 'lancerPartie',
             pseudoJoueur: pseudo
@@ -302,6 +303,25 @@ class CDCsocket {
         }).then(() => {
             loadIndexConnected();
         });
+    }
+
+    static _statsJoueur(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'statistiques',
+            pseudoJoueur: pseudo
+        }));
+    }
+
+    static statistiques(msg) {
+        msg.joueur != null ? 
+            loadStatistiques(msg.joueur) : '';
+    }
+
+    static _leaveGame(pseudo) {
+        this.service.send(JSON.stringify({
+            id: 'dissoudrePartie',
+            pseudoJoueur: pseudo
+        }));
     }
 }
 

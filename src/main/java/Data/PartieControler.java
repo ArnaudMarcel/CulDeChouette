@@ -17,7 +17,7 @@ import java.util.Random;
 
 /**
  *
- * @author darra
+ * @author Arnaud
  */
 public class PartieControler {
 
@@ -55,6 +55,7 @@ public class PartieControler {
         for (Joueur j : this.joueurs) {
             if (this.points.get(j).getNbPoints() >= this.p.getNbPointsAAtteindrePartie()) {
                 this.points.get(j).setEstGagnant(true);
+                j.setNbMoyVictoires(1 + j.getNbVictoires());
                 fini = true;
                 break;
             }
@@ -142,10 +143,12 @@ public class PartieControler {
         JoueurJPA jp = new JoueurJPA();
         if (this.action) {
             Joueur j = jp.find(a.getPseudoJoueur());
+            this.points.get(j).ajoutSuiteGagnee();
             this.suite.put(j, true);
             if (this.estDernier()) {
                 Posseder pts = this.points.get(j);
                 pts.addPoints(-10);
+                pts.SuitePerdue();
                 this.points.put(j, pts);
                 this.joueurs.forEach((Joueur jTamp) -> {
                     this.suite.put(jTamp, false);
@@ -162,6 +165,7 @@ public class PartieControler {
             Joueur j = jp.find(a.getPseudoJoueur());
             Posseder pts = this.points.get(j);
             pts.addPoints(a.getValeurCul() * a.getValeurCul());
+            this.updateNbChouettesVeluesPerdues(j);
             this.tourSuivant();
         }
     }
@@ -173,7 +177,10 @@ public class PartieControler {
     private void saugarderPartie() {
         this.joueurs.forEach((Joueur j) -> {
             PossederJPA pj = new PossederJPA();
+            JoueurJPA jp = new JoueurJPA();
             Posseder p1 = PartieControler.this.points.get(j);
+            this.updateJoueur(j, p1);
+            jp.update(j);
             p1.setIdJoueur(j.getIdJoueur());
             p1.setIdPartie(PartieControler.this.p.getIdPartie());
             pj.create(p1);
@@ -183,8 +190,10 @@ public class PartieControler {
     private Joueur gagnant() {
         Joueur gagnant = null;
         for (Joueur j : this.joueurs) {
-            gagnant = this.points.get(j).isEstGagnant() ? j : null;
-        }
+            if (this.points.get(j).isEstGagnant()) {
+                gagnant = j;
+            }
+        }        
         return gagnant;
     }
 
@@ -197,5 +206,25 @@ public class PartieControler {
             pts.add(tamp);
         });
         return pts;
+    }
+    
+    private void updateJoueur(Joueur j, Posseder p) {
+        if (j.equals(this.gagnant())) {
+            j.setNbVictoires(1 + j.getNbVictoires());
+        } 
+        j.setNbParties(1 + j.getNbParties());
+        j.setNbMoyVictoires(j.getNbVictoires() / j.getNbParties());
+        j.setScoreMoyen((j.getScoreMoyen() * (j.getNbParties() - 1) + p.getNbPoints()) / j.getNbParties());
+        j.setMoySuitesGagnees((j.getMoySuitesGagnees() * (j.getNbParties() - 1) + p.getNbSuitesGagnees()) / j.getNbParties());        
+        j.setMoyChouettesVelutesPerdues((j.getMoyChouettesVelutesPerdues()* (j.getNbParties() - 1) + p.getNbChouettesVelutesPerdues()) / j.getNbParties());
+    }
+    
+    private void updateNbChouettesVeluesPerdues(Joueur j) {
+        this.joueurs.forEach((Joueur jTamp) -> {
+            if (!jTamp.equals(j)) {
+                Posseder pt = this.points.get(j);
+                pt.setNbChouettesVelutesPerdues(1 + pt.getNbChouettesVelutesPerdues());
+            }
+        });
     }
 }

@@ -1,12 +1,27 @@
 let CDCjoueur = null;
 let listDesJoueurs = [];
-let demande;
+let demande, quitter;
 
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 function loadGame(pts, listeDesJoueurs) {
+    quitter = window.addEventListener('keydown', event => {
+        Swal.fire({
+            icon: 'question',
+            html: '<h2 style="font-weight:lighter; font-size:23px;">Etes-vous certain ?</h2><br><p>Le groupe sera dissout</p>',
+            confirmButtonColor: 'rgb(0, 151, 0)',
+            showDenyButton: true,
+            denyButtonText: 'Refuser'
+        }).then((result) => {
+            if (result.value) {
+                quitter = null;
+                CDCsocket._leaveGame(CDCjoueur.getPseudo());
+            }
+        })
+    });
+
     document.body.innerHTML =
     `<main>
     <center>
@@ -47,6 +62,8 @@ function tourJoueur() {
         CDCsocket._lancerDes(CDCjoueur.getPseudo());
         event.target.remove();
     });
+
+    
 }
 
 function UpdateScore(score) {
@@ -273,8 +290,9 @@ function loadIndexConnected() {
                 <ul>
                     <li>
                         <a id="create_game">Créer une partie</a><br><br>
+                        <a id="stats">Statistiques</a><br><br>
                         <a id="bregles">Règles du jeu</a><br><br>
-                        <a id="deconnection">Déconnection</a><br><br>
+                        <a id="deconnection">Déconnection</a>
                     </li>
                 </ul>
             </div>
@@ -398,16 +416,13 @@ function getPointsGame() {
             const inputRange = Swal.getInput();
             const inputNumber = Swal.getContent().querySelector('#range-value');
 
-            // remove default output
             inputRange.nextElementSibling.style.display = 'none';
             inputRange.style.width = '100%';
 
-            // sync input[type=number] with input[type=range]
             inputRange.addEventListener('input', () => {
                 inputNumber.value = inputRange.value;
             })
 
-            // sync input[type=range] with input[type=number]
             inputNumber.addEventListener('change', () => {
                 inputRange.value = inputNumber.value;
             })
@@ -455,6 +470,44 @@ function loadLobby() {
     });
 }
 
+function loadStatistiques(joueur) {
+    console.log(joueur);
+    document.body.innerHTML = `<main>
+    <center>
+        <fieldset>
+            <legend>${joueur.pseudoJoueur}</legend>
+            <table id="joueurStats">
+                <tr>
+                    <td>Nombre de parties</td>
+                    <td>${joueur.nbParties}</td>
+                <td>
+                <tr>
+                    <td>Nombre de victoires</td>
+                    <td>${joueur.nbVictoires}</td>
+                <td>
+                <tr>
+                    <td>Score moyen</td>
+                    <td>${joueur.scoreMoyen}</td>
+                <td>
+                <tr>
+                    <td>Moyenne de chouettes velues perdues</td>
+                    <td>${joueur.moyChouettesVelutesPerdues}</td>
+                <td>
+                <tr>
+                    <td>Moyenne de suites gagnées</td>
+                    <td>${joueur.moySuitesGagnees}</td>
+                <td>
+            </table>
+        </fieldset><br><br>
+        <a id="retour">Retour</a>
+    </center>
+    </main>`;
+
+    document.getElementById('retour').addEventListener('click', event => {
+        loadIndexConnected();
+    });
+}
+
 function loadCreateGame() {
 
     document.body.innerHTML = `<main>
@@ -485,14 +538,15 @@ function loadCreateGame() {
     //     document.getElementById('waiting').innerHTML = `<h5 id="waiting">${wait}${pts}</h5>`;
     // }, 400);
 
-    document.getElementById('back').addEventListener('click', event => {
-        CDCsocket._quitterLobby(CDCjoueur.getPseudo());
-    });
-
     getPointsGame();
     demande = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());
     }, 1000);
+
+    document.getElementById('back').addEventListener('click', event => {
+        clearInterval(demande)
+        CDCsocket._quitterLobby(CDCjoueur.getPseudo());
+    });
 
     document.getElementById('start').addEventListener('click', event => {
         CDCsocket._lancerPartie(CDCjoueur.getPseudo());      
@@ -524,6 +578,10 @@ let pageManager = document.addEventListener('click', event => {
 
         case 'bregles':
             loadRegles();
+            break;
+
+        case 'stats':
+            CDCsocket._statsJoueur(CDCjoueur.getPseudo());
             break;
     }
 });

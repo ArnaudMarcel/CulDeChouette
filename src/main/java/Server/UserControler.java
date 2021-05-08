@@ -276,4 +276,25 @@ public class UserControler {
             }
         });
     }
+
+    public void statistiques(String message, javax.websocket.Session session) throws IOException {
+        JoueurJPA jp = new JoueurJPA();
+        Joueur j = jp.find(gson.fromJson(message, Joueur.class).getPseudoJoueur());
+        this.response.put("id", "statistiques");
+        this.response.put("joueur", j);
+        WebSocket.listeJoueurs.get(j.getPseudoJoueur()).getBasicRemote().sendText(gson.toJson(this.response));
+    }
+    
+    public void dissoudrePartie(String message, javax.websocket.Session session) {
+        Joueur j = gson.fromJson(message, Joueur.class);
+        Partie p = WebSocket.listeParties.get(j.getPseudoJoueur());
+        this.response.put("id", "PartieSupprimee");
+        WebSocket.pm.getJoueurs(p).forEach((Joueur jTamp) -> {
+            try {
+                WebSocket.listeJoueurs.get(jTamp.getPseudoJoueur()).getBasicRemote().sendText(gson.toJson(this.response));
+            } catch (IOException ex) {
+                Logger.getLogger(UserControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
 }

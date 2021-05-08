@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 /**
  *
- * @author darra
+ * @author Arnaud
  */
 public class PartieManager {
     private HashMap<Partie, ArrayList<Joueur>> parties;
