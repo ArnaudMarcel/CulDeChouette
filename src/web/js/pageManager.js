@@ -1,26 +1,31 @@
 let CDCjoueur = null;
 let listDesJoueurs = [];
-let demande, quitter;
+let demande, enPartie = false;
 
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 function loadGame(pts, listeDesJoueurs) {
-    quitter = window.addEventListener('keydown', event => {
-        Swal.fire({
-            icon: 'question',
-            html: '<h2 style="font-weight:lighter; font-size:23px;">Etes-vous certain ?</h2><br><p>Le groupe sera dissout</p>',
-            confirmButtonColor: 'rgb(0, 151, 0)',
-            showDenyButton: true,
-            denyButtonText: 'Refuser'
-        }).then((result) => {
-            if (result.value) {
-                quitter = null;
-                CDCsocket._leaveGame(CDCjoueur.getPseudo());
-            }
-        })
+    enPartie = true;
+    let quitter = window.addEventListener('keydown', event => {
+        if (event.key === "Escape" && enPartie) {
+            Swal.fire({
+                icon: 'question',
+                html: '<h2 style="font-weight:lighter; font-size:23px;">Etes-vous certain ?</h2><br><p>Le groupe sera dissout</p>',
+                confirmButtonColor: 'rgb(0, 151, 0)',
+                showDenyButton: true,
+                denyButtonText: 'Refuser'
+            }).then((result) => {
+                if (result.value) {
+                    enPartie = false;
+                    CDCsocket._leaveGame(CDCjoueur.getPseudo());
+                }
+            });
+        }
     });
+
+    console.log(quitter);
 
     document.body.innerHTML =
     `<main>
@@ -282,6 +287,7 @@ function loadCreation() {
 }
 
 function loadIndexConnected() {
+    enPartie = false;
     document.body.innerHTML = `
     <main>
         <center>

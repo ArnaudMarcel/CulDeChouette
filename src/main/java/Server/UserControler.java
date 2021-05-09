@@ -291,10 +291,13 @@ public class UserControler {
         this.response.put("id", "PartieSupprimee");
         WebSocket.pm.getJoueurs(p).forEach((Joueur jTamp) -> {
             try {
+                WebSocket.listeParties.remove(jTamp.getPseudoJoueur());
                 WebSocket.listeJoueurs.get(jTamp.getPseudoJoueur()).getBasicRemote().sendText(gson.toJson(this.response));
             } catch (IOException ex) {
                 Logger.getLogger(UserControler.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        WebSocket.pm.delete(p);
+        WebSocket.listeParties.remove(j.getPseudoJoueur());
     }
 }
