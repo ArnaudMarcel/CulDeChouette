@@ -66,9 +66,7 @@ function tourJoueur() {
     document.getElementById('buttonDes').addEventListener('click', event => {
         CDCsocket._lancerDes(CDCjoueur.getPseudo());
         event.target.remove();
-    });
-
-    
+    });    
 }
 
 function UpdateScore(score) {
@@ -194,30 +192,30 @@ function loadConnexion() {
                     <input type="button" value="Connexion" id="button">
                 </form>
                 <br><br>
-                <a onclick="loadCreation();" id="creation">Je n'ai pas encore de compte.</a>
+                <a>Je n'ai pas encore de compte</a>
             </div><br><br>
         </center>
     </main>`;
 
     document.addEventListener('click', event => {
+        console.log(event.target.value);
         switch (event.target.value) {
-            case 'creation':
-                loadCreation();
-                break;
-
-            case "Je n'ai pas encore de compte.":
+            case "Je n'ai pas encore de compte":
                 loadCreation();
                 break;
 
             case 'Annuler':
                 loadIndex();
+                break;
 
             case 'Connexion':
+                event.stopImmediatePropagation();
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
                 CDCjoueur = new Joueur(pseudo);
-                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp): '';
-
+                if (pseudo != '' && mdp != '') {
+                    CDCsocket._connexionJoueur(pseudo, mdp);
+                }
                 break;
         }
     });
@@ -234,8 +232,8 @@ function loadCreation() {
             <form method="post">
                 <label for="pseudo">Pseudo :</label>
                 <input id="pseudo" type="text" required><br><br>
-                <label for="mdp">Mot de passe :</label>
-                <input id="mdp" type="password" required><br><br>
+                <label for="motDePasse">Mot de passe :</label>
+                <input id="motDePasse" type="password" required><br><br>
                 <label for="sexe">Sexe :</label>
                 <div id="radio">
                 <input type="checkbox" id="Homme" class="gender"/> Homme <input type="checkbox" id="Femme" class="gender"/> Femme
@@ -270,17 +268,23 @@ function loadCreation() {
     });
 
     document.addEventListener('click', event => {
+        console.log(event.target.value);
         switch (event.target.value) {
             case 'Annuler':
                 loadIndex();
                 break;
             case 'Valider':
                 let pseudo = document.getElementById('pseudo').value;
-                let mdp = document.getElementById('mdp').value;
+                let mdp = document.getElementById('motDePasse').value;
                 let ville = document.getElementById('ville').value;
                 let ageJ = document.getElementById('age').value;
                 CDCjoueur = new Joueur(pseudo);
-                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ): '';
+                console.log(pseudo, mdp, ville, ageJ, sexe);
+                if (sexe != null && ageJ != ''){
+                    event.stopImmediatePropagation();
+                    console.log("on rentre dans la créa");
+                    CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ);
+                } 
                 break;
         }
     });

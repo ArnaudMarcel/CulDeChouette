@@ -49,17 +49,7 @@ class CDCsocket {
             sexeJoueur: sexe,
             villeJoueur: ville,
             ageJoueur: age,
-        }));
-        this.service.send(JSON.stringify(
-            {
-                id: "creationJoueur",
-                pseudoJoueur: pseudo,
-                motDePasseJoueur: mdp,
-                sexeJoueur: sexe,
-                villeJoueur: ville,
-                ageJoueur: age,
-            })
-        );      
+        }));   
     }
 
     static creationJoueur_reussie() {
