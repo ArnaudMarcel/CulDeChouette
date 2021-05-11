@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 /**
  *
- * @author darra
+ * @author Arnaud
  */
 public class PartieManager {
     private HashMap<Partie, ArrayList<Joueur>> parties;
@@ -47,7 +47,6 @@ public class PartieManager {
     
     public ArrayList getPseudoJoueurs(Partie p) {
         ArrayList pseudo = new ArrayList();
-        System.out.println(this.parties.containsKey(p));
         this.parties.get(p).forEach(j -> {
             pseudo.add(j.getPseudoJoueur());
         });
@@ -58,7 +57,6 @@ public class PartieManager {
         ArrayList listJ = this.parties.get(p);
         listJ.remove(j);
         this.parties.put(p, listJ);
-        System.out.println(this.parties);
     }
     
     public void delete(Partie p) {

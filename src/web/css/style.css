@@ -21,9 +21,10 @@ main {
     color: white;
 }
 
-a{
+a {
     cursor: pointer;
 }
+
 /* ------------------------------ Accueil ------------------------------ */
 
 #logoAccueil {
@@ -95,14 +96,14 @@ input {
     background-color: white;
 }
 
-#button {
+.button {
     margin: 15px;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-#button:hover {
+.button:hover {
     margin: 15px;
     cursor: pointer;
     color: white;
@@ -271,7 +272,7 @@ a:hover {
 #liste fieldset {
     border: 2px solid white;
     padding: 25px;
-    width: 40%;
+    width: 30%;
     display: inline-block;
     margin: 10px;
     text-align: justify;
@@ -299,6 +300,22 @@ a:hover {
 
 #liste a:hover {
     text-decoration: underline;
+}
+
+#buttonInvit{
+    margin: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px;
+    background-color: transparent;
+    border: white 1px solid;
+    color: white;
+}
+
+#buttonInvit:hover{
+    background-color: white;
+    color: black;
 }
 
 /* ------------------------------ Game ------------------------------ */
@@ -372,7 +389,8 @@ legend {
     margin-top: 10px;
 }
 
-#suiteButton, #CVButton{
+#suiteButton,
+#CVButton {
     margin: 25px;
     cursor: pointer;
     text-transform: uppercase;
@@ -389,15 +407,60 @@ legend {
     display: none;
 }
 
-#suiteButton:hover, #CVButton:hover {
+#suiteButton:hover,
+#CVButton:hover {
     cursor: pointer;
     color: #303030;
     background-color: white;
 }
 
-#suiteButton:focus, #CVButton:focus {
+#suiteButton:focus,
+#CVButton:focus {
     outline: none;
 }
+
+#ScorePartie{
+    position: absolute;
+    top: 0;
+}
+
+#ScorePartie td{
+    padding: 10px;
+}
+
+/* ----------------------------- Statistiques ----------------------------- */
+
+#logoStat {
+    width: 400px;
+    margin-top: 30px;
+}
+
+#statistiques {
+    font-size: 20px;
+}
+
+#statistiques h1 {
+    margin: 15px;
+    text-decoration: underline;
+    font-style: none;
+    font-weight: normal;
+}
+
+#statistiques fieldset{
+    color: white;
+    text-decoration: none;
+    list-style: none;
+    font-size: 25px;
+    letter-spacing: 0.8px;
+    padding: 15px;
+    margin: 50px;
+}
+
+#statistiques td{
+    padding: 5px;
+    padding-left: 30px;
+}
+
 
 /* ------------------------------ Animations ------------------------------ */
 

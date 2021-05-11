@@ -78,15 +78,15 @@ public class Lancer implements Serializable {
             this.interaction = true;
         }
     }
-    
+
     public boolean isVelute() {
-        return (this.valeurDes1 + this.valeurDes2 == this.valeurDes3 && this.valeurDes1 != this.valeurDes2);
+        return (this.valeurDes1 + this.valeurDes2 == this.valeurDes3);
     }
-    
+
     public boolean isChouette() {
-        return (this.valeurDes1 == this.valeurDes2 && this.valeurDes1 * 2 != this.valeurDes3);
+        return (this.valeurDes1 == this.valeurDes2);
     }
-    
+
     public boolean isCulDeChouette() {
         return (this.valeurDes1 == this.valeurDes2 && this.valeurDes2 == this.valeurDes3);
     }
@@ -94,23 +94,56 @@ public class Lancer implements Serializable {
     public boolean isSuite() {
         return (this.valeurDes1 + 1 == this.valeurDes2 && this.valeurDes1 + 2 == this.valeurDes3);
     }
-    
+
     public boolean isChouetteVelute() {
         return (this.isChouette() && this.isVelute());
     }
-    
+
     public String getNomInteraction() {
         String nom = null;
         if (this.interaction == true) {
             if (this.isChouetteVelute()) {
-                nom = "ChouetteVelute";
+                nom = "Chouette Velute";
             } else {
                 nom = "Suite";
             }
         }
         return nom;
     }
+
+    public String getReponseInteraction() {
+        String s = "";
+        if (this.interaction) {
+            switch (this.getNomInteraction()) {
+                case "Chouette Velute":
+                    s = "Pas mou le caillou !";
+                    break;
+
+                case "Suite":
+                    s = "Grelotte ça picote !";
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        return s;
+    }
     
+    public String getCombinaisonName() {
+        String s = "none";
+        if (this.isVelute() && !this.isChouette()) {
+            s = "Velute";
+        }
+        if (!this.isVelute() && this.isChouette()) {
+            s = "Chouette";
+        }
+        if (this.isCulDeChouette()) {
+            s = "Cul De Chouette";
+        }
+        return s;
+    }
+
     public long getIdLancer() {
         return idLancer;
     }

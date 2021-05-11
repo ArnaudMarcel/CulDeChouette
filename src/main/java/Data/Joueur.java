@@ -102,6 +102,10 @@ public class Joueur implements Serializable {
         this.moyChouettesVelutesPerdues = moyChouettesVelutesPerdues;
         this.disponible = true;
     }
+    
+    public void victoire() {
+        this.nbVictoires++; 
+    }
 
     public Long getIdJoueur() {
         return idJoueur;

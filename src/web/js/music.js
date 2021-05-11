@@ -1,7 +1,7 @@
 let music = true;
 
 //initialize musics and sounds
-const backgroundMusic = new buzz.sound("../music/music.mp3");
+const backgroundMusic = new buzz.sound("./music/music.mp3");
 buzz.all().setVolume(50);
 
 window.addEventListener('load', init);

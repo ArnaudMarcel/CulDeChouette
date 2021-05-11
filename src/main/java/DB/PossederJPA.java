@@ -83,7 +83,7 @@ public class PossederJPA {
         posseder = (Posseder) q.getSingleResult();
         posseder.setNbPoints(p.getNbPoints());
         posseder.setNbSuitesGagnees(p.getNbSuitesGagnees());
-        posseder.setNbChouettesVelutesGagnees(p.getNbChouettesVelutesGagnees());
+        posseder.setNbChouettesVelutesPerdues(p.getNbChouettesVelutesPerdues());
         posseder.setEstGagnant(p.isEstGagnant());
         this.em.getTransaction().commit();
     }

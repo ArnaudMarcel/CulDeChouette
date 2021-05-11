@@ -28,21 +28,20 @@ public class JoueurJPA {
        this.em = emf.createEntityManager();
     }
     
-    public void create(Joueur j) throws SpeudoAlreadyExistException {
+    public void create(Joueur j) throws PseudoAlreadyExistException {
         if (find(j.getPseudoJoueur()) == null) {
             this.em.getTransaction().begin();
             this.em.persist(j);
             this.em.getTransaction().commit();
         } else {
-            throw new SpeudoAlreadyExistException("Pseudo existant : " + j.getPseudoJoueur());
+            throw new PseudoAlreadyExistException("Pseudo existant : " + j.getPseudoJoueur());
         }
     }
     
     public void update(Joueur j) {
         this.em.getTransaction().begin();
         Query q = em.createQuery("SELECT j FROM Joueur j WHERE idJoueur = " + j.getIdJoueur(), Joueur.class);
-        Joueur p = new Joueur();
-        p = (Joueur) q.getSingleResult();
+        Joueur p = (Joueur) q.getSingleResult();
         p.setAgeJoueur(j.getAgeJoueur());
         p.setMotDePasseJoueur(j.getMotDePasseJoueur());
         p.setMoyChouettesVelutesPerdues(j.getMoyChouettesVelutesPerdues());

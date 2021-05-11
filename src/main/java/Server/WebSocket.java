@@ -53,7 +53,7 @@ public class WebSocket {
         @javax.websocket.OnOpen
         public void onOpen(javax.websocket.Session session) throws java.io.IOException {
             HashMap r = new HashMap();
-            r.put("id", "test");
+            r.put("id", "hello");
             session.getBasicRemote().sendText(gson.toJson(r));
         }
     }

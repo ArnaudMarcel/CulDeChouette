@@ -1,17 +1,39 @@
 let CDCjoueur = null;
 let listDesJoueurs = [];
-let demande;
+let demande, enPartie = false;
 
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 function loadGame(pts, listeDesJoueurs) {
+    enPartie = true;
+    let quitter = window.addEventListener('keydown', event => {
+        if (event.key === "Escape" && enPartie) {
+            Swal.fire({
+                icon: 'question',
+                html: '<h2 style="font-weight:lighter; font-size:23px;">Voulez vous vraiment quitter ?</h2><br><p>Le groupe sera dissout.</p>',
+                confirmButtonColor: 'rgb(0, 151, 0)',
+                showDenyButton: true,
+                denyButtonText: 'Oui',
+                denyButtonText: 'Non'
+            }).then((result) => {
+                if (result.value) {
+                    enPartie = false;
+                    CDCsocket._leaveGame(CDCjoueur.getPseudo());
+                }
+            });
+        }
+    });
+
+    console.log(quitter);
+
     document.body.innerHTML =
-    `<main>
+        `<main>
     <center>
         <img src="img/logo.png" alt="logo.png" id="logoGame">
         <div id="fieldset">
+        <table id="ScorePartie"></table>
             <fieldset>
                 <legend>La Chouette</legend>
                 <img src="img/1.png" id="des1" class="fadeIn">
@@ -23,7 +45,6 @@ function loadGame(pts, listeDesJoueurs) {
             </fieldset>
         </div>
         <div id="lancer"></div>
-        ${listeDesJoueurs}
         <div id="trapeze">
             <div id="score">0 / ${pts}</div>
         </div>
@@ -32,7 +53,13 @@ function loadGame(pts, listeDesJoueurs) {
     </center>
     </main>`;
 
-
+    tableHTML = '';
+    listeDesJoueurs.forEach(j => {
+        tableHTML += `<tr>
+            <td>${j}</td>
+            <td>0</td>
+        </tr>`;
+    });
 }
 
 function tourJoueur() {
@@ -43,46 +70,114 @@ function tourJoueur() {
     });
 }
 
-function montrerDes(lancer) {
-    document.getElementById("des1").src = "img/" + lancer.valeurDes1 + ".png";
-    document.getElementById("des2").src = "img/" + lancer.valeurDes2 + ".png";
-    document.getElementById("des3").src = "img/" + lancer.valeurDes3 + ".png";
-    // document.getElementById("buttonDes").style.display = "none";
-    document.getElementById("des1").className = "fadeIn load";
-    sleep(500).then(() => {
-        document.getElementById("des2").className = "fadeIn load";
-        sleep(500).then(() => {
-            document.getElementById("des3").className = "fadeIn load";
-        });
+function UpdateScore(score) {
+    tableHTML = '';
+    score.forEach(elt => {
+        tableHTML += `<tr>
+            <td>${elt[0]}</td>
+            <td>${elt[1]}</td>
+        </tr>`;
     });
+    document.getElementById('ScorePartie').innerHTML = tableHTML;
 }
 
-function montrerDesLanceur(lancer) {
-    document.getElementById("des1").src = "img/" + lancer.valeurDes1 + ".png";
-    document.getElementById("des2").src = "img/" + lancer.valeurDes2 + ".png";
-    document.getElementById("des3").src = "img/" + lancer.valeurDes3 + ".png";
+function UpdateBottomScore(score) {
+    let bottomS = document.getElementById('score');
+    let s = score.find(elt => elt[0] === CDCjoueur.getPseudo())[1];
+    bottomS.innerText = s + ' / ' + bottomS.innerText.split(' / ').pop();
+}
+
+function montrerDes(msg) {
+    document.getElementById("des1").src = "img/" + msg.lancer.valeurDes1 + ".png";
+    document.getElementById("des2").src = "img/" + msg.lancer.valeurDes2 + ".png";
+    document.getElementById("des3").src = "img/" + msg.lancer.valeurDes3 + ".png";
     // document.getElementById("buttonDes").style.display = "none";
     document.getElementById("des1").className = "fadeIn load";
     sleep(500).then(() => {
         document.getElementById("des2").className = "fadeIn load";
         sleep(500).then(() => {
             document.getElementById("des3").className = "fadeIn load";
+            sleep(800).then(() => {
+                UpdateScore(msg.score);
+                UpdateBottomScore(msg.score);
+                msg.combinaison != "none" ? Swal.fire({
+                    position: 'top-end',
+                    html: `<h2 style="font-weight:lighter; font-size:23px;">Combinaison obtenue !</h2><br><p>Le joueur a obtenu : ${msg.combinaison}</p>`,
+                    backdrop: 'transparent',
+                    showConfirmButton: false,
+                    timer: 2500
+                }) : '';
+
+                msg.lancer.interaction ? Swal.fire({
+                    icon: 'warning',
+                    html: `<h2 style="font-weight:lighter; font-size:23px;">${msg.action}</h2><br><p>Cliquez sur le bouton avant les autres joueurs pour ne pas être pénalisé !</p>`,
+                    confirmButtonText: `${msg.reponse}`,
+                    confirmButtonColor: 'rgb(0, 151, 0)',
+                }).then((result) => {
+                    if (result.value) {
+                        document.getElementById("des1").className = "fadeIn";
+                        document.getElementById("des2").className = "fadeIn";
+                        document.getElementById("des3").className = "fadeIn";
+                        CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
+                    }
+                }) : '';
+            });
         });
     });
 
-    if (!lancer.interaction) {
-        console.log("sleep");
-        sleep(5000).then(() => {
-            console.log("go");
+    if (!msg.lancer.interaction) {
+        sleep(4000).then(() => {
+            document.getElementById("des1").className = "fadeIn";
+            document.getElementById("des2").className = "fadeIn";
+            document.getElementById("des3").className = "fadeIn";
+        });
+    }
+}
+
+function montrerDesLanceur(msg) {
+    document.getElementById("des1").src = "img/" + msg.lancer.valeurDes1 + ".png";
+    document.getElementById("des2").src = "img/" + msg.lancer.valeurDes2 + ".png";
+    document.getElementById("des3").src = "img/" + msg.lancer.valeurDes3 + ".png";
+    document.getElementById("des1").className = "fadeIn load";
+    sleep(500).then(() => {
+        document.getElementById("des2").className = "fadeIn load";
+        sleep(500).then(() => {
+            document.getElementById("des3").className = "fadeIn load";
+            sleep(800).then(() => {
+                UpdateScore(msg.score);
+                UpdateBottomScore(msg.score);
+                msg.combinaison != "none" ? Swal.fire({
+                    position: 'top-end',
+                    html: `<h2 style="font-weight:lighter; font-size:23px;">Combinaison obtenue !</h2><br><p>Vous avez obtenu : ${msg.combinaison}</p>`,
+                    backdrop: 'transparent',
+                    showConfirmButton: false,
+                    timer: 2500
+                }) : '';
+
+                msg.lancer.interaction ? Swal.fire({
+                    icon: 'warning',
+                    html: `<h2 style="font-weight:lighter; font-size:23px;">${msg.action}</h2><br><p>Cliquez sur le bouton avant les autres joueurs pour ne pas être pénalisé !</p>`,
+                    confirmButtonText: `${msg.reponse}`,
+                    confirmButtonColor: 'rgb(0, 151, 0)',
+                }).then((result) => {
+                    if (result.value) {
+                        document.getElementById("des1").className = "fadeIn";
+                        document.getElementById("des2").className = "fadeIn";
+                        document.getElementById("des3").className = "fadeIn";
+                        CDCsocket._actionJoueur(CDCjoueur.getPseudo(), msg.action, msg.reponse, msg.lancer.valeurDes3);
+                    }
+                }) : '';
+            });
+        });
+    });
+
+    if (!msg.lancer.interaction) {
+        sleep(4000).then(() => {
+            document.getElementById("des1").className = "fadeIn";
+            document.getElementById("des2").className = "fadeIn";
+            document.getElementById("des3").className = "fadeIn";
             CDCsocket._joueurSuivant(CDCjoueur.getPseudo());
         });
-    } else {
-        // if(msg == "Suite"){
-        //     document.getElementById("suiteButton").style.display = "inline";
-        // }else if( msg == "ChouetteVelute"){
-        //     document.getElementById("CVButton").style.display = "inline";
-        // }
-
     }
 }
 
@@ -103,31 +198,27 @@ function loadConnexion() {
                     <input type="button" value="Connexion" id="button">
                 </form>
                 <br><br>
-                <a onclick="loadCreation();" id="creation">Je n'ai pas encore de compte.</a>
+                <a onClick="loadCreation();">Je n'ai pas encore de compte</a>
             </div><br><br>
         </center>
     </main>`;
 
     document.addEventListener('click', event => {
+        console.log(event.target.value);
         switch (event.target.value) {
-            case 'creation':
-                loadCreation();
-                break;
-
-            case "Je n'ai pas encore de compte.":
-                loadCreation();
-                break;
 
             case 'Annuler':
                 loadIndex();
+                break;
 
             case 'Connexion':
+                event.stopImmediatePropagation();
                 let pseudo = document.getElementById('pseudo').value;
                 let mdp = document.getElementById('mdp').value;
                 CDCjoueur = new Joueur(pseudo);
-                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp): '';
-                (pseudo != '' && mdp != '') ? CDCsocket._connexionJoueur(pseudo, mdp) : '';
-
+                if (pseudo != '' && mdp != '') {
+                    CDCsocket._connexionJoueur(pseudo, mdp);
+                }
                 break;
         }
     });
@@ -144,8 +235,8 @@ function loadCreation() {
             <form method="post">
                 <label for="pseudo">Pseudo :</label>
                 <input id="pseudo" type="text" required><br><br>
-                <label for="mdp">Mot de passe :</label>
-                <input id="mdp" type="password" required><br><br>
+                <label for="motDePasse">Mot de passe :</label>
+                <input id="motDePasse" type="password" required><br><br>
                 <label for="sexe">Sexe :</label>
                 <div id="radio">
                 <input type="checkbox" id="Homme" class="gender"/> Homme <input type="checkbox" id="Femme" class="gender"/> Femme
@@ -180,34 +271,40 @@ function loadCreation() {
     });
 
     document.addEventListener('click', event => {
+        console.log(event.target.value);
         switch (event.target.value) {
             case 'Annuler':
                 loadIndex();
                 break;
             case 'Valider':
                 let pseudo = document.getElementById('pseudo').value;
-                let mdp = document.getElementById('mdp').value;
+                let mdp = document.getElementById('motDePasse').value;
                 let ville = document.getElementById('ville').value;
                 let ageJ = document.getElementById('age').value;
                 CDCjoueur = new Joueur(pseudo);
-                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ): '';
-                (sexe != null && ageJ != '') ? CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ) : '';
+                console.log(pseudo, mdp, ville, ageJ, sexe);
+                if (sexe != null && ageJ != '') {
+                    event.stopImmediatePropagation();
+                    CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ);
+                }
                 break;
         }
     });
 }
 
 function loadIndexConnected() {
+    enPartie = false;
     document.body.innerHTML = `
     <main>
         <center>
-            <img src="img/logo.png" alt="logo.png" id="logo">
+            <img src="img/logo.png" alt="logo.png" id="logoAccueil">
             <div id="menu">
                 <ul>
                     <li>
                         <a id="create_game">Créer une partie</a><br><br>
+                        <a id="stats">Statistiques</a><br><br>
                         <a id="bregles">Règles du jeu</a><br><br>
-                        <a id="deconnection">Déconnection</a><br><br>
+                        <a id="deconnexion">Déconnexion</a>
                     </li>
                 </ul>
             </div>
@@ -237,7 +334,7 @@ function loadIndex() {
 
 function loadRegles() {
     document.body.innerHTML =
-    `<main>
+        `<main>
     <center>
     <img src="img/logo.png" alt="logo.png" id="logoRegles">
     <div id="regles">
@@ -302,7 +399,7 @@ function loadRegles() {
     </main>`;
 
     document.getElementById('back').addEventListener('click', event => {
-        loadIndex();
+        CDCjoueur === null ? loadIndex() : loadIndexConnected();
     });
 }
 
@@ -331,16 +428,13 @@ function getPointsGame() {
             const inputRange = Swal.getInput();
             const inputNumber = Swal.getContent().querySelector('#range-value');
 
-            // remove default output
             inputRange.nextElementSibling.style.display = 'none';
             inputRange.style.width = '100%';
 
-            // sync input[type=number] with input[type=range]
             inputRange.addEventListener('input', () => {
                 inputNumber.value = inputRange.value;
             })
 
-            // sync input[type=range] with input[type=number]
             inputNumber.addEventListener('change', () => {
                 inputRange.value = inputNumber.value;
             })
@@ -379,12 +473,53 @@ function loadLobby() {
 
     demande = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());
-        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
     }, 1000);
 
     document.getElementById('back').addEventListener('click', event => {
         clearInterval(demande)
         CDCsocket._leaveLobby(CDCjoueur.getPseudo());
+        loadIndexConnected();
+    });
+}
+
+function loadStatistiques(joueur) {
+    console.log(joueur);
+    document.body.innerHTML = `<main>
+    <center>
+        <img src="img/logo.png" alt="logo.png" id="logoStat"><br><br>
+        <div id="statistiques">
+            <h1>Statistiques</h1>
+                <fieldset>
+                    <legend>Statistiques de ${joueur.pseudoJoueur}</legend>
+                    <table id="joueurStats">
+                        <tr>
+                            <td>Nombre de parties</td>
+                            <td>${joueur.nbParties}</td>
+                        <td>
+                        <tr>
+                            <td>Nombre de victoires</td>
+                            <td>${joueur.nbVictoires}</td>
+                        <td>
+                        <tr>
+                            <td>Score moyen</td>
+                            <td>${joueur.scoreMoyen}</td>
+                        <td>
+                        <tr>
+                            <td>Moyenne de chouettes velutes perdues</td>
+                            <td>${joueur.moyChouettesVelutesPerdues}</td>
+                        <td>
+                        <tr>
+                            <td>Moyenne de suites gagnées</td>
+                            <td>${joueur.moySuitesGagnees}</td>
+                        <td>
+                    </table>
+                </fieldset><br><br>
+                <a id="retour">Retour</a>
+            </div>
+        </center>
+    </main>`;
+
+    document.getElementById('retour').addEventListener('click', event => {
         loadIndexConnected();
     });
 }
@@ -411,30 +546,19 @@ function loadCreateGame() {
     </center>
     </main>`;
 
-    // let wait = 'En attente de joueur'; //CDCjoueur
-    // let pts = '';
-    // var myInter = setInterval(() => {
-    //     pts += '.';
-    //     if (pts.length > 3) pts = '';
-    //     document.getElementById('waiting').innerHTML = `<h5 id="waiting">${wait}${pts}</h5>`;
-    // }, 400);
-
-    document.getElementById('back').addEventListener('click', event => {
-        CDCsocket._quitterLobby(CDCjoueur.getPseudo());
-    });
-
     getPointsGame();
     demande = setInterval(() => {
         CDCsocket._getJoueurs(CDCjoueur.getPseudo());
     }, 1000);
 
-    document.getElementById('start').addEventListener('click', event => {
-        CDCsocket._getJoueurs(CDCjoueur.getPseudo());      
-    }, 1000);
-
-    document.getElementById('start').addEventListener('click', event =>{
-        CDCsocket._lancerPartie(CDCjoueur.getPseudo());
+    document.getElementById('back').addEventListener('click', event => {
+        clearInterval(demande)
+        CDCsocket._quitterLobby(CDCjoueur.getPseudo());
     });
+
+    document.getElementById('start').addEventListener('click', event => {
+        CDCsocket._lancerPartie(CDCjoueur.getPseudo());
+    }, 1000);
 }
 
 window.addEventListener('beforeunload', (event) => {
@@ -443,7 +567,7 @@ window.addEventListener('beforeunload', (event) => {
 
 let pageManager = document.addEventListener('click', event => {
     switch (event.target.id) {
-        case 'deconnection':
+        case 'deconnexion':
             CDCsocket._disconnect(CDCjoueur.getPseudo());
             loadIndex();
             break;
@@ -463,6 +587,9 @@ let pageManager = document.addEventListener('click', event => {
         case 'bregles':
             loadRegles();
             break;
+
+        case 'stats':
+            CDCsocket._statsJoueur(CDCjoueur.getPseudo());
+            break;
     }
-});
 });

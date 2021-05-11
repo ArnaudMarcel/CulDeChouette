@@ -27,20 +27,32 @@ public class Posseder implements Serializable {
     @Column(name="nbSuitesGagnees")
     int nbSuitesGagnees;
     @Column(name="nbChouettesVelutesGagnees")
-    int nbChouettesVelutesGagnees;
+    int nbChouettesVelutesPerdues;
     @Column(name="estGagnant")
     boolean estGagnant = false; 
 
-    public Posseder(Long idJoueur, Long idPartie, int nbPoints, int nbSuitesGagnees, int nbChouettesVelutesGagnees, boolean estGagnant) {
+    public Posseder(Long idJoueur, Long idPartie, int nbPoints, int nbSuitesGagnees, int nbChouettesVelutesPerdues, boolean estGagnant) {
         this.idJoueur = idJoueur;
         this.idPartie = idPartie;
         this.nbPoints = nbPoints;
         this.nbSuitesGagnees = nbSuitesGagnees;
-        this.nbChouettesVelutesGagnees = nbChouettesVelutesGagnees;
+        this.nbChouettesVelutesPerdues = nbChouettesVelutesPerdues;
         this.estGagnant = estGagnant;
     }
 
     public Posseder() {
+    }
+    
+    public void ajoutSuiteGagnee() {
+        this.nbSuitesGagnees++;
+    }
+    
+    public void SuitePerdue() {
+        this.nbSuitesGagnees--;
+    }
+    
+    public void addPoints(int pts) {
+        this.nbPoints += pts;
     }
 
     public Long getIdJoueur() {
@@ -75,12 +87,12 @@ public class Posseder implements Serializable {
         this.nbSuitesGagnees = nbSuitesGagnees;
     }
 
-    public int getNbChouettesVelutesGagnees() {
-        return nbChouettesVelutesGagnees;
+    public int getNbChouettesVelutesPerdues() {
+        return nbChouettesVelutesPerdues;
     }
 
-    public void setNbChouettesVelutesGagnees(int nbChouettesVelutesGagnees) {
-        this.nbChouettesVelutesGagnees = nbChouettesVelutesGagnees;
+    public void setNbChouettesVelutesPerdues(int nbChouettesVelutesPerdues) {
+        this.nbChouettesVelutesPerdues = nbChouettesVelutesPerdues;
     }
 
     public boolean isEstGagnant() {
@@ -93,7 +105,7 @@ public class Posseder implements Serializable {
 
     @Override
     public String toString() {
-        return "Posseder{" + "idJoueur=" + idJoueur + ", idPartie=" + idPartie + ", nbPoints=" + nbPoints + ", nbSuitesGagnees=" + nbSuitesGagnees + ", nbChouettesVelutesGagnees=" + nbChouettesVelutesGagnees + ", estGagnant=" + estGagnant + '}';
+        return "Posseder{" + "idJoueur=" + idJoueur + ", idPartie=" + idPartie + ", nbPoints=" + nbPoints + ", nbSuitesGagnees=" + nbSuitesGagnees + ", nbChouettesVelutesGagnees=" + nbChouettesVelutesPerdues + ", estGagnant=" + estGagnant + '}';
     }
     
 }
