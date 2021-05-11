@@ -397,7 +397,7 @@ function loadRegles() {
     </main>`;
 
     document.getElementById('back').addEventListener('click', event => {
-        loadIndex();
+        CDCjoueur === null ? loadIndex() : loadIndexConnected();
     });
 }
 
