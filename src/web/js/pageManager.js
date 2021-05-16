@@ -27,7 +27,7 @@ function loadGame(pts, listeDesJoueurs) {
     });
 
     document.body.innerHTML =
-    `<main>
+        `<main>
     <center>
         <img src="img/logo.png" alt="logo.png" id="logoGame">
         <div id="fieldset">
@@ -497,6 +497,10 @@ function loadStatistiques(joueur) {
                         <tr>
                             <td>Nombre de victoires</td>
                             <td>${joueur.nbVictoires}</td>
+                        <td>
+                        <tr>
+                            <td>Nombre moyen de victoires</td>
+                            <td>${joueur.nbMoyVictoires}</td>
                         <td>
                         <tr>
                             <td>Score moyen</td>

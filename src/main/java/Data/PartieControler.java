@@ -213,10 +213,10 @@ public class PartieControler {
             j.setNbVictoires(1 + j.getNbVictoires());
         } 
         j.setNbParties(1 + j.getNbParties());
-        j.setNbMoyVictoires(j.getNbVictoires() / j.getNbParties());
-        j.setScoreMoyen((j.getScoreMoyen() * (j.getNbParties() - 1) + p.getNbPoints()) / j.getNbParties());
-        j.setMoySuitesGagnees((j.getMoySuitesGagnees() * (j.getNbParties() - 1) + p.getNbSuitesGagnees()) / j.getNbParties());        
-        j.setMoyChouettesVelutesPerdues((j.getMoyChouettesVelutesPerdues()* (j.getNbParties() - 1) + p.getNbChouettesVelutesPerdues()) / j.getNbParties());
+        j.setNbMoyVictoires((float)j.getNbVictoires() / j.getNbParties());
+        j.setScoreMoyen((j.getScoreMoyen() * (j.getNbParties() - 1) + (float)p.getNbPoints()) / j.getNbParties());
+        j.setMoySuitesGagnees((j.getMoySuitesGagnees() * (j.getNbParties() - 1) + (float)p.getNbSuitesGagnees()) / j.getNbParties());        
+        j.setMoyChouettesVelutesPerdues((j.getMoyChouettesVelutesPerdues()* (j.getNbParties() - 1) + (float)p.getNbChouettesVelutesPerdues()) / j.getNbParties());
     }
     
     private void updateNbChouettesVeluesPerdues(Joueur j) {

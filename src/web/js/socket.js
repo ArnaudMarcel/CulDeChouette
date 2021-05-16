@@ -14,9 +14,11 @@ class CDCsocket {
         this.service.onclose = (event) => {
             console.log("Fermeture du service. Code : " + event.code);
         };
-        
+
         this.service.onopen = () => {
-            this.service.send(JSON.stringify({id: "handShacking"}));
+            this.service.send(JSON.stringify({
+                id: "handShacking"
+            }));
         };
 
         this.service.onclose = (event) => {
@@ -49,7 +51,7 @@ class CDCsocket {
             sexeJoueur: sexe,
             villeJoueur: ville,
             ageJoueur: age,
-        }));  
+        }));
     }
 
     static creationJoueur_reussie() {
@@ -78,20 +80,20 @@ class CDCsocket {
 
     static connexionJoueur_echec(msg) {
         console.log(msg.raison);
-        if(msg.raison === undefined){
+        if (msg.raison === undefined) {
             Swal.fire({
                 icon: 'error',
                 html: `<h2 style="font-weight:lighter; font-size:23px;">Erreur de connexion</h2><br><p>Joueur inconnu.</p>`,
                 confirmButtonColor: 'rgb(0, 151, 0)',
             });
-        }else{
+        } else {
             Swal.fire({
                 icon: 'error',
                 html: `<h2 style="font-weight:lighter; font-size:23px;">Erreur de connexion</h2><br><p>${msg.raison}.</p>`,
                 confirmButtonColor: 'rgb(0, 151, 0)',
             });
         }
-        
+
     }
 
     static _creerPartie(pts, pseudo) {
@@ -139,8 +141,8 @@ class CDCsocket {
                 </tr>`;
         });
 
-            msg.joueursLobby.forEach(elt => {
-                JoueursLob += `<tr>
+        msg.joueursLobby.forEach(elt => {
+            JoueursLob += `<tr>
                     <td>
                         ${elt}
                     </td>
@@ -178,8 +180,7 @@ class CDCsocket {
         }));
     }
 
-    static invitationJoueur_reussie() {
-    }
+    static invitationJoueur_reussie() {}
 
     static invitationPartie(msg) {
         Swal.fire({
@@ -189,7 +190,7 @@ class CDCsocket {
             confirmButtonColor: 'rgb(0, 151, 0)',
             showDenyButton: true,
             denyButtonText: 'Refuser'
-        }).then( (result) => {
+        }).then((result) => {
             if (result.value) {
                 this.service.send(JSON.stringify({
                     id: 'rejoindre',
@@ -229,7 +230,7 @@ class CDCsocket {
     }
 
     static _lancerPartie(pseudo) {
-        
+
         this.service.send(JSON.stringify({
             id: 'lancerPartie',
             pseudoJoueur: pseudo
@@ -306,7 +307,7 @@ class CDCsocket {
     }
 
     static statistiques(msg) {
-        msg.joueur != null ? 
+        msg.joueur != null ?
             loadStatistiques(msg.joueur) : '';
     }
 
