@@ -79,7 +79,6 @@ class CDCsocket {
     }
 
     static connexionJoueur_echec(msg) {
-        console.log(msg.raison);
         if (msg.raison === undefined) {
             Swal.fire({
                 icon: 'error',
