@@ -202,7 +202,6 @@ function loadConnexion() {
     </main>`;
 
     document.addEventListener('click', event => {
-        console.log(event.target.value);
         switch (event.target.value) {
 
             case 'Annuler':
@@ -269,7 +268,6 @@ function loadCreation() {
     });
 
     document.addEventListener('click', event => {
-        console.log(event.target.value);
         switch (event.target.value) {
             case 'Annuler':
                 loadIndex();
@@ -280,7 +278,6 @@ function loadCreation() {
                 let ville = document.getElementById('ville').value;
                 let ageJ = document.getElementById('age').value;
                 CDCjoueur = new Joueur(pseudo);
-                console.log(pseudo, mdp, ville, ageJ, sexe);
                 if (sexe != null && ageJ != '' && pseudo != '' && mdp != '' && ville != '') {
                     event.stopImmediatePropagation();
                     CDCsocket._sendCreation(pseudo, mdp, sexe, ville, ageJ);
@@ -481,7 +478,6 @@ function loadLobby() {
 }
 
 function loadStatistiques(joueur) {
-    console.log(joueur);
     document.body.innerHTML = `<main>
     <center>
         <img src="img/logo.png" alt="logo.png" id="logoStat"><br><br>
