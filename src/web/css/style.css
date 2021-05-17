@@ -1,0 +1,482 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-in-out;
+    font-family: 'Alfa Slab One';
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    background: radial-gradient(rgb(0, 151, 0), black 150%);
+    color: white;
+}
+
+a {
+    cursor: pointer;
+}
+
+/* ------------------------------ Accueil ------------------------------ */
+
+#logoAccueil {
+    margin-top: 7%;
+}
+
+#menu {
+    margin-top: 80px;
+    color: white;
+    text-decoration: none;
+    list-style: none;
+    font-size: 30px;
+    text-align: center;
+    letter-spacing: 0.7px;
+    padding-bottom: 50px;
+}
+
+#menu ul {
+    list-style: none;
+}
+
+#menu li a {
+    color: white;
+    text-decoration: none;
+}
+
+#menu li a:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------ Creation ------------------------------ */
+
+#logoCreation {
+    width: 300px;
+    margin-top: 50px;
+}
+
+#creation {
+    background-color: white;
+    border-radius: 5px;
+    color: #303030;
+    text-align: center;
+    letter-spacing: 0.7px;
+    width: 500px;
+    height: 690px;
+    margin-top: 50px;
+}
+
+#creation h1 {
+    text-decoration: underline;
+    font-style: none;
+    font-weight: normal;
+    padding: 20px;
+}
+
+#creation p {
+    margin: 15px;
+}
+
+#creation a {
+    margin: 15px;
+    text-decoration: none;
+    color: #303030;
+}
+
+input {
+    padding: 10px;
+    border-style: solid #303030 1px;
+    background-color: white;
+}
+
+.button {
+    margin: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.button:hover {
+    margin: 15px;
+    cursor: pointer;
+    color: white;
+    background-color: #303030;
+}
+
+#creation a:hover {
+    text-decoration: underline;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+label {
+    display: block;
+}
+
+#radio {
+    margin-top: 3px;
+}
+
+/* ------------------------------ Connexion ------------------------------ */
+
+#logoConnexion {
+    width: 300px;
+    margin-top: 50px;
+}
+
+#connexion {
+    background-color: white;
+    border-radius: 5px;
+    color: #303030;
+    text-align: center;
+    letter-spacing: 0.7px;
+    width: 500px;
+    height: 500px;
+    margin-top: 50px;
+}
+
+#connexion h1 {
+    margin: 15px;
+    text-decoration: underline;
+    font-style: none;
+    font-weight: normal;
+    padding: 20px;
+}
+
+#connexion p {
+    margin: 15px;
+}
+
+#connexion a {
+    margin: 15px;
+    text-decoration: none;
+    color: #303030;
+}
+
+input {
+    padding: 10px;
+    border-style: solid #303030 1px;
+    background-color: white;
+}
+
+#button {
+    margin: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#button:hover {
+    margin: 15px;
+    cursor: pointer;
+    color: white;
+    background-color: #303030;
+}
+
+#connexion a:hover {
+    text-decoration: underline;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+label {
+    display: block;
+}
+
+/* ------------------------------ Regles ------------------------------ */
+
+#logoRegles {
+    width: 300px;
+    margin-top: 25px;
+}
+
+#regles {
+    margin: auto;
+    color: white;
+    text-decoration: none;
+    list-style: none;
+    font-size: 20px;
+    padding-right: 20%;
+    padding-left: 20%;
+    padding-bottom: 50px;
+    letter-spacing: 0.7px;
+    font-weight: normal;
+}
+
+#regles h1 {
+    margin: 15px;
+    text-decoration: underline;
+    font-style: none;
+    font-weight: normal;
+}
+
+#regles fieldset {
+    border: 2px solid white;
+    padding: 10px;
+    width: auto;
+    display: inline-block;
+    margin: 10px;
+    text-align: justify;
+}
+
+#regles legend {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#regles p {
+    margin: 15px;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------ Liste ------------------------------ */
+
+#liste {
+    font-size: 25px;
+}
+
+#logoListe {
+    width: 300px;
+    margin-top: 25px;
+}
+
+#liste fieldset {
+    border: 2px solid white;
+    padding: 25px;
+    width: 30%;
+    display: inline-block;
+    margin: 10px;
+    text-align: justify;
+    min-height: 50vh;
+}
+
+#liste legend {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#liste table {
+    width: 100%;
+    text-align: center;
+}
+
+#liste tr {
+    border: 1px white solid;
+}
+
+#liste a {
+    text-decoration: none;
+    color: white;
+}
+
+#liste a:hover {
+    text-decoration: underline;
+}
+
+#buttonInvit{
+    margin: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px;
+    background-color: transparent;
+    border: white 1px solid;
+    color: white;
+}
+
+#buttonInvit:hover{
+    background-color: white;
+    color: black;
+}
+
+/* ------------------------------ Game ------------------------------ */
+
+#logoGame {
+    width: 400px;
+    margin-top: 30px;
+}
+
+#fieldset {
+    margin-top: 100px;
+    color: white;
+    text-decoration: none;
+    list-style: none;
+    font-size: 25px;
+    text-align: center;
+    letter-spacing: 0.8px;
+}
+
+fieldset {
+    border: 2px solid white;
+    padding: 10px;
+    width: auto;
+    display: inline-block;
+    margin: 10px;
+}
+
+legend {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#buttonDes {
+    margin: 25px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px;
+    font-size: 17px;
+    border-color: white;
+    border-style: solid white 1px;
+    background-color: transparent;
+    color: white;
+}
+
+#buttonDes:hover {
+    cursor: pointer;
+    color: #303030;
+    background-color: white;
+}
+
+#buttonDes:focus {
+    outline: none;
+}
+
+#trapeze {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 60px solid white;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    height: 0;
+    width: 300px;
+}
+
+#score {
+    color: #303030;
+    font-size: 1.8em;
+    margin-top: 10px;
+}
+
+#suiteButton,
+#CVButton {
+    margin: 25px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px;
+    font-size: 17px;
+    border-color: white;
+    border-style: solid white 1px;
+    background-color: transparent;
+    color: white;
+    position: absolute;
+    right: 10%;
+    bottom: 5%;
+    display: none;
+}
+
+#suiteButton:hover,
+#CVButton:hover {
+    cursor: pointer;
+    color: #303030;
+    background-color: white;
+}
+
+#suiteButton:focus,
+#CVButton:focus {
+    outline: none;
+}
+
+#ScorePartie{
+    position: absolute;
+    top: 0;
+}
+
+#ScorePartie td{
+    padding: 10px;
+}
+
+/* ----------------------------- Statistiques ----------------------------- */
+
+#logoStat {
+    width: 400px;
+    margin-top: 30px;
+}
+
+#statistiques {
+    font-size: 20px;
+}
+
+#statistiques h1 {
+    margin: 15px;
+    text-decoration: underline;
+    font-style: none;
+    font-weight: normal;
+}
+
+#statistiques fieldset{
+    color: white;
+    text-decoration: none;
+    list-style: none;
+    font-size: 25px;
+    letter-spacing: 0.8px;
+    padding: 15px;
+    margin: 50px;
+}
+
+#statistiques td{
+    padding: 5px;
+    padding-left: 30px;
+}
+
+
+/* ------------------------------ Animations ------------------------------ */
+
+.fadeIn {
+    opacity: 0;
+    -webkit-transition: opacity 1s ease-in;
+    -moz-transition: opacity 1s ease-in;
+    -o-transition: opacity 1s ease-in;
+    -ms-transition: opacity 1s ease-in;
+    transition: opacity 1s ease-in;
+}
+
+.fadeIn.load {
+    opacity: 1;
+}
+
+.fadeIn.unload {
+    opacity: 0;
+}
